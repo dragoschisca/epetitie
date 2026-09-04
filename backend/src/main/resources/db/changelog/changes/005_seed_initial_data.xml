@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="005-1" author="gov_architect">
+        <!-- Roles -->
+        <insert tableName="roles">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="ROLE_CITIZEN"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="ROLE_OFFICER"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="ROLE_ADMIN"/>
+        </insert>
+
+        <!-- System Admin (Password: Admin2026!) BCrypt: $2a$10$42wEwM/7L3f1uA3mH2vR4e4c2r1s0t0u0v0w0x0y0z1a2b3c4d5e6 -->
+        <!-- Standard BCrypt for 'Password2026!': $2a$10$K4rD8zO40jZ76xYgGgR/t.1Y9M/XpYvYq0GzE31E5Y9XpYvYq0GzE -->
+        <!-- Password for all seeded accounts is 'Password2026!' -->
+        <insert tableName="users">
+            <column name="id" valueNumeric="1"/>
+            <column name="idnp" value="2000123456789"/>
+            <column name="username" value="admin"/>
+            <column name="email" value="admin@gov.md"/>
+            <column name="password_hash" value="$2a$10$HZbkukop3diFCT8yKXSWlee280n0mhvDulfOM5JONf7worLsAeMA2"/>
+            <column name="first_name" value="Ion"/>
+            <column name="last_name" value="Ceban"/>
+            <column name="phone" value="+37369000001"/>
+            <column name="department" value="Administrația Centrală"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="role_id" valueNumeric="3"/>
+        </insert>
+
+        <!-- Officer 1: Infrastructură -->
+        <insert tableName="users">
+            <column name="id" valueNumeric="2"/>
+            <column name="idnp" value="2001123456780"/>
+            <column name="username" value="officer_infra"/>
+            <column name="email" value="officer.infra@gov.md"/>
+            <column name="password_hash" value="$2a$10$HZbkukop3diFCT8yKXSWlee280n0mhvDulfOM5JONf7worLsAeMA2"/>
+            <column name="first_name" value="Elena"/>
+            <column name="last_name" value="Munteanu"/>
+            <column name="phone" value="+37369000002"/>
+            <column name="department" value="Infrastructură și Dezvoltare Regională"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="role_id" valueNumeric="2"/>
+        </insert>
+
+        <!-- Officer 2: Mediu -->
+        <insert tableName="users">
+            <column name="id" valueNumeric="3"/>
+            <column name="idnp" value="2002123456781"/>
+            <column name="username" value="officer_mediu"/>
+            <column name="email" value="officer.mediu@gov.md"/>
+            <column name="password_hash" value="$2a$10$HZbkukop3diFCT8yKXSWlee280n0mhvDulfOM5JONf7worLsAeMA2"/>
+            <column name="first_name" value="Mihai"/>
+            <column name="last_name" value="Popescu"/>
+            <column name="phone" value="+37369000003"/>
+            <column name="department" value="Mediu"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="3"/>
+            <column name="role_id" valueNumeric="2"/>
+        </insert>
+
+        <!-- Citizen 1 -->
+        <insert tableName="users">
+            <column name="id" valueNumeric="4"/>
+            <column name="idnp" value="2003001002003"/>
+            <column name="username" value="citizen_andrei"/>
+            <column name="email" value="andrei.v@gmail.com"/>
+            <column name="password_hash" value="$2a$10$HZbkukop3diFCT8yKXSWlee280n0mhvDulfOM5JONf7worLsAeMA2"/>
+            <column name="first_name" value="Andrei"/>
+            <column name="last_name" value="Vieru"/>
+            <column name="phone" value="+37369123456"/>
+            <column name="department" value=""/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="4"/>
+            <column name="role_id" valueNumeric="1"/>
+        </insert>
+
+        <!-- Synchronize Sequences for PostgreSQL -->
+        <sql dbms="postgresql">
+            SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+            SELECT setval('roles_id_seq', (SELECT MAX(id) FROM roles));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

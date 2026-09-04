@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-gov-bg text-gov-text m-0 p-0 antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-gov-primary font-semibold;
+  }
+  
+  /* Global Focus Styles for Accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-gov-cta ring-offset-2;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gov-cta hover:bg-gov-cta-hover transition-colors duration-200 cursor-pointer min-h-[44px] min-w-[44px];
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-gov-border text-base font-medium rounded-md text-gov-secondary bg-white hover:bg-gray-50 transition-colors duration-200 cursor-pointer min-h-[44px] min-w-[44px];
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 cursor-pointer min-h-[44px] min-w-[44px];
+  }
+}
+
+.bg-gov-pattern {
+  background-color: #003366;
+  background-image: radial-gradient(#F2A900 0.75px, transparent 0.75px), radial-gradient(#F2A900 0.75px, #003366 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  opacity: 0.98;
+}
