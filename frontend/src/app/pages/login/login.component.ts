@@ -9,42 +9,42 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gov-border">
-        <div class="text-center">
-          <div class="w-16 h-16 bg-gov-blue text-gov-gold rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow" aria-hidden="true">
-            MD
+    <div class="min-h-[75vh] flex items-center justify-center py-10 px-4 sm:px-6">
+      <div class="max-w-md w-full space-y-6 evo-card p-8 sm:p-10 border border-evo-border shadow-evo-card">
+        <!-- Logo & Header -->
+        <div class="text-center space-y-3">
+          <div class="w-14 h-14 bg-gradient-to-br from-evo-navy to-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-xl mx-auto shadow-md border border-slate-700">
+            <span class="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">MPass</span>
           </div>
-          <h2 class="text-2xl font-serif font-bold text-gov-primary">Autentificare MPass</h2>
-          <p class="text-sm text-gov-secondary mt-2">Sistemul Național de Identificare</p>
+          <div class="space-y-1">
+            <h1 class="text-2xl font-black text-evo-navy tracking-tight">Autentificare MPass</h1>
+            <p class="text-xs text-evo-text-muted">Serviciul Guvernamental de Autentificare și Control al Accesului</p>
+          </div>
         </div>
 
         @if (errorMessage) {
-          <div class="bg-red-50 border-l-4 border-red-600 p-4 rounded text-sm text-red-800 font-medium" role="alert">
-            {{ errorMessage }}
+          <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-xs text-rose-700 font-semibold flex items-center gap-2">
+            <svg class="w-4 h-4 flex-shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>{{ errorMessage }}</span>
           </div>
         }
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
-          <div>
-            <label for="usernameOrEmail" class="block text-sm font-bold text-gov-primary mb-2">
-              Nume Utilizator / Email
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <div class="space-y-1.5">
+            <label for="usernameOrEmail" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">
+              Nume Utilizator / Email MPass
             </label>
             <input
               id="usernameOrEmail"
               type="text"
               formControlName="usernameOrEmail"
-              placeholder="ex: andrei.v sau cetatean@gov.md"
-              class="w-full px-4 py-3 border border-gov-border rounded-md focus:ring-2 focus:ring-gov-cta focus:border-gov-cta text-base text-gov-text"
-              [attr.aria-invalid]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched"
+              placeholder="ex: citizen_andrei sau cetatean@gov.md"
+              class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all"
             />
-            @if (loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched) {
-              <p class="text-sm text-red-600 mt-2 font-medium" id="username-error">Introduceți numele de utilizator sau adresa de email.</p>
-            }
           </div>
 
-          <div>
-            <label for="password" class="block text-sm font-bold text-gov-primary mb-2">
+          <div class="space-y-1.5">
+            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">
               Parolă
             </label>
             <input
@@ -52,42 +52,39 @@ import { AuthService } from '../../services/auth.service';
               type="password"
               formControlName="password"
               placeholder="••••••••"
-              class="w-full px-4 py-3 border border-gov-border rounded-md focus:ring-2 focus:ring-gov-cta focus:border-gov-cta text-base text-gov-text"
-              [attr.aria-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all"
             />
-            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-              <p class="text-sm text-red-600 mt-2 font-medium" id="password-error">Parola este obligatorie.</p>
-            }
           </div>
 
           <button
             type="submit"
             [disabled]="loginForm.invalid || isLoading"
-            class="btn-primary w-full disabled:opacity-50"
+            class="btn-primary w-full py-3 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
           >
             @if (isLoading) {
-              <span class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" aria-hidden="true"></span>
-              <span>Se autentifică...</span>
+              <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              <span>Se conectează la MPass...</span>
             } @else {
-              <span>Intră în Cabinetul Cetățeanului</span>
+              <span>Conectare MPass</span>
             }
           </button>
         </form>
 
         <!-- Quick Credentials Hint for Reviewers -->
-        <div class="mt-8 bg-gov-bg p-4 rounded-lg border border-gov-border text-sm">
-          <div class="font-bold text-gov-primary mb-2">Conturi de Test Pre-configurate:</div>
-          <ul class="space-y-2 text-gov-secondary font-mono text-xs">
-            <li><strong>Cetățean:</strong> username: <code>citizen_andrei</code> / parola: <code>Password2026!</code></li>
-            <li><strong>Inspector:</strong> username: <code>officer_infra</code> / parola: <code>Password2026!</code></li>
-            <li><strong>Admin:</strong> username: <code>admin</code> / parola: <code>Password2026!</code></li>
-          </ul>
+        <div class="bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs space-y-2">
+          <div class="font-bold text-evo-navy flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-evo-cobalt" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Conturi Demonstrative Demo:</span>
+          </div>
+          <div class="space-y-1 text-evo-text-muted font-mono text-[11px]">
+            <div><strong>Cetățean:</strong> <code>citizen_andrei</code> / <code>Password2026!</code></div>
+            <div><strong>Inspector:</strong> <code>officer_infra</code> / <code>Password2026!</code></div>
+          </div>
         </div>
 
-        <div class="text-center pt-4 text-sm text-gov-secondary">
-          Nu aveți un cont înregistrat?
-          <br/>
-          <a routerLink="/register" class="text-gov-cta font-bold hover:underline focus-visible inline-block mt-2">Înregistrare Cetățean (IDNP)</a>
+        <div class="text-center text-xs text-evo-text-muted pt-2 border-t border-evo-border">
+          Nu ai cont MPass înregistrat?
+          <a routerLink="/register" class="text-evo-cobalt font-bold hover:underline ml-1">Înregistrare Cetățean (IDNP)</a>
         </div>
       </div>
     </div>
@@ -119,7 +116,7 @@ export class LoginComponent {
     }).subscribe({
       next: (res) => {
         this.isLoading = false;
-        if (res.user.roles.includes('ROLE_OFFICER') || res.user.roles.includes('ROLE_ADMIN')) {
+        if (res.user.roles.includes('ROLE_OFFICER')) {
           this.router.navigate(['/officer-dashboard']);
         } else {
           this.router.navigate(['/citizen-cabinet']);

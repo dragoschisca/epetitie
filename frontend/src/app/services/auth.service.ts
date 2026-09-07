@@ -19,12 +19,7 @@ export class AuthService {
 
   isOfficer = computed(() => {
     const user = this.currentUserSignal();
-    return user ? (user.roles.includes('ROLE_OFFICER') || user.roles.includes('ROLE_ADMIN')) : false;
-  });
-
-  isAdmin = computed(() => {
-    const user = this.currentUserSignal();
-    return user ? user.roles.includes('ROLE_ADMIN') : false;
+    return user ? user.roles.includes('ROLE_OFFICER') : false;
   });
 
   constructor(private http: HttpClient) {}
@@ -45,6 +40,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_info');
     this.currentUserSignal.set(null);
+    window.location.href = '/login';
   }
 
   private setSession(authResult: AuthResponse): void {

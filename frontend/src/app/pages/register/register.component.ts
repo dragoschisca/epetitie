@@ -29,28 +29,30 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-2xl w-full space-y-8 bg-white p-8 sm:p-10 rounded-xl shadow-lg border border-gov-border">
-        <div class="text-center">
-          <div class="inline-flex items-center space-x-2 px-4 py-1.5 bg-gov-blue/10 text-gov-blue text-sm font-bold rounded-full mb-4">
-            <span aria-hidden="true">MD</span>
+    <div class="min-h-[80vh] flex items-center justify-center py-10 px-4 sm:px-6">
+      <div class="max-w-2xl w-full space-y-6 evo-card p-8 sm:p-10 border border-evo-border shadow-evo-card">
+        <!-- Header -->
+        <div class="text-center space-y-2">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-evo-cobalt-light text-evo-cobalt text-xs font-bold rounded-full border border-blue-100">
+            <span class="w-2 h-2 rounded-full bg-evo-cobalt"></span>
             <span>Înregistrare MConnect / MPass Portal</span>
           </div>
-          <h2 class="text-3xl font-serif font-bold text-gov-primary">Creare Cont Cetățean</h2>
-          <p class="text-sm text-gov-secondary mt-2">Validare Algoritmică IDNP Republica Moldova (13 cifre)</p>
+          <h1 class="text-2xl font-black text-evo-navy tracking-tight">Creare Cont Cetățean</h1>
+          <p class="text-xs text-evo-text-muted">Validare Algoritmică IDNP Republica Moldova (13 cifre)</p>
         </div>
 
         @if (errorMessage) {
-          <div class="bg-red-50 border-l-4 border-red-600 p-4 rounded text-sm text-red-800 font-medium" role="alert">
-            {{ errorMessage }}
+          <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-xs text-rose-700 font-semibold flex items-center gap-2">
+            <svg class="w-4 h-4 flex-shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>{{ errorMessage }}</span>
           </div>
         }
 
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6 mt-8">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
           <!-- IDNP Field with live validation feedback -->
-          <div>
-            <label for="idnp" class="block text-sm font-bold text-gov-primary mb-2">
-              IDNP Solicitant (13 Cifre) <span class="text-red-600" aria-label="obligatoriu">*</span>
+          <div class="space-y-1.5">
+            <label for="idnp" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">
+              IDNP Solicitant (13 Cifre) <span class="text-red-500">*</span>
             </label>
             <div class="relative">
               <input
@@ -59,84 +61,82 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
                 formControlName="idnp"
                 maxlength="13"
                 placeholder="2003001002003"
-                class="w-full px-4 py-3 border rounded-md font-mono text-base tracking-wider focus:ring-2 focus:ring-gov-cta focus:border-gov-cta"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-xl font-mono text-sm tracking-widest focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all"
                 [ngClass]="{
-                  'border-red-500 bg-red-50': idnpControl?.invalid && idnpControl?.touched,
-                  'border-green-600 bg-green-50': idnpControl?.valid && idnpControl?.touched,
-                  'border-gov-border': !(idnpControl?.invalid && idnpControl?.touched) && !(idnpControl?.valid && idnpControl?.touched)
+                  'border-rose-400 bg-rose-50/50': idnpControl?.invalid && idnpControl?.touched,
+                  'border-emerald-500 bg-emerald-50/50': idnpControl?.valid && idnpControl?.touched,
+                  'border-evo-border': !(idnpControl?.invalid && idnpControl?.touched) && !(idnpControl?.valid && idnpControl?.touched)
                 }"
-                [attr.aria-invalid]="idnpControl?.invalid && idnpControl?.touched"
               />
               @if (idnpControl?.valid && idnpControl?.touched) {
-                <span class="absolute right-4 top-3.5 text-green-700 text-sm font-bold flex items-center space-x-1">
-                  <span aria-hidden="true">✓</span>
+                <span class="absolute right-3.5 top-2.5 text-emerald-600 text-xs font-bold flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   <span>IDNP Valid</span>
                 </span>
               }
             </div>
             @if (idnpControl?.hasError('required') && idnpControl?.touched) {
-              <p class="text-sm text-red-600 mt-2 font-medium">IDNP-ul este obligatoriu pentru cetățenii RM.</p>
+              <p class="text-xs text-rose-600 font-medium">IDNP-ul este obligatoriu pentru cetățenii RM.</p>
             }
             @if (idnpControl?.hasError('invalidIdnpFormat') && idnpControl?.touched) {
-              <p class="text-sm text-red-600 mt-2 font-medium">IDNP trebuie să conțină exact 13 cifre numerice.</p>
+              <p class="text-xs text-rose-600 font-medium">IDNP trebuie să conțină exact 13 cifre numerice.</p>
             }
             @if (idnpControl?.hasError('invalidIdnpChecksum') && idnpControl?.touched) {
-              <p class="text-sm text-red-600 mt-2 font-medium">Cifra de control IDNP este invalidă conform algoritmului oficial RM.</p>
+              <p class="text-xs text-rose-600 font-medium">Cifra de control IDNP este invalidă conform algoritmului oficial RM.</p>
             }
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label for="lastName" class="block text-sm font-bold text-gov-primary mb-2">Nume <span class="text-red-600" aria-label="obligatoriu">*</span></label>
-              <input id="lastName" type="text" formControlName="lastName" placeholder="Vieru" class="w-full px-4 py-3 border border-gov-border rounded-md text-base focus:ring-2 focus:ring-gov-cta focus:border-gov-cta" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label for="lastName" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Nume <span class="text-red-500">*</span></label>
+              <input id="lastName" type="text" formControlName="lastName" placeholder="Vieru" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
             </div>
-            <div>
-              <label for="firstName" class="block text-sm font-bold text-gov-primary mb-2">Prenume <span class="text-red-600" aria-label="obligatoriu">*</span></label>
-              <input id="firstName" type="text" formControlName="firstName" placeholder="Andrei" class="w-full px-4 py-3 border border-gov-border rounded-md text-base focus:ring-2 focus:ring-gov-cta focus:border-gov-cta" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label for="username" class="block text-sm font-bold text-gov-primary mb-2">Nume Utilizator <span class="text-red-600" aria-label="obligatoriu">*</span></label>
-              <input id="username" type="text" formControlName="username" placeholder="andrei_v" class="w-full px-4 py-3 border border-gov-border rounded-md text-base focus:ring-2 focus:ring-gov-cta focus:border-gov-cta" />
-            </div>
-            <div>
-              <label for="phone" class="block text-sm font-bold text-gov-primary mb-2">Telefon mobil</label>
-              <input id="phone" type="text" formControlName="phone" placeholder="+37369123456" class="w-full px-4 py-3 border border-gov-border rounded-md text-base focus:ring-2 focus:ring-gov-cta focus:border-gov-cta" />
+            <div class="space-y-1.5">
+              <label for="firstName" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Prenume <span class="text-red-500">*</span></label>
+              <input id="firstName" type="text" formControlName="firstName" placeholder="Andrei" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
             </div>
           </div>
 
-          <div>
-            <label for="email" class="block text-sm font-bold text-gov-primary mb-2">Email <span class="text-red-600" aria-label="obligatoriu">*</span></label>
-            <input id="email" type="email" formControlName="email" placeholder="andrei.v@gmail.com" class="w-full px-4 py-3 border border-gov-border rounded-md text-base focus:ring-2 focus:ring-gov-cta focus:border-gov-cta" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label for="username" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Nume Utilizator <span class="text-red-500">*</span></label>
+              <input id="username" type="text" formControlName="username" placeholder="andrei_v" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
+            </div>
+            <div class="space-y-1.5">
+              <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Telefon mobil</label>
+              <input id="phone" type="text" formControlName="phone" placeholder="+37369123456" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
+            </div>
           </div>
 
-          <div>
-            <label for="password" class="block text-sm font-bold text-gov-primary mb-2">Parolă (Min. 8 caractere) <span class="text-red-600" aria-label="obligatoriu">*</span></label>
-            <input id="password" type="password" formControlName="password" placeholder="••••••••" class="w-full px-4 py-3 border border-gov-border rounded-md text-base focus:ring-2 focus:ring-gov-cta focus:border-gov-cta" />
+          <div class="space-y-1.5">
+            <label for="email" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Adresă Email <span class="text-red-500">*</span></label>
+            <input id="email" type="email" formControlName="email" placeholder="andrei.v@gmail.com" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
           </div>
 
-          <div class="pt-4">
+          <div class="space-y-1.5">
+            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Parolă (Min. 8 caractere) <span class="text-red-500">*</span></label>
+            <input id="password" type="password" formControlName="password" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
+          </div>
+
+          <div class="pt-2">
             <button
               type="submit"
               [disabled]="registerForm.invalid || isLoading"
-              class="btn-primary w-full disabled:opacity-50"
+              class="btn-primary w-full py-3 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
             >
               @if (isLoading) {
-                <span class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" aria-hidden="true"></span>
+                <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <span>Se procesează înregistrarea...</span>
               } @else {
-                <span>Creează Contul de Cetățean</span>
+                <span>Creează Cont Cetățean MPass</span>
               }
             </button>
           </div>
         </form>
 
-        <div class="text-center pt-6 text-sm text-gov-secondary">
-          Aveți deja un cont înregistrat?
-          <br/>
-          <a routerLink="/login" class="text-gov-cta font-bold hover:underline focus-visible inline-block mt-2">Autentificați-vă aici</a>
+        <div class="text-center text-xs text-evo-text-muted pt-2 border-t border-evo-border">
+          Ai deja cont înregistrat?
+          <a routerLink="/login" class="text-evo-cobalt font-bold hover:underline ml-1">Autentifică-te aici</a>
         </div>
       </div>
     </div>

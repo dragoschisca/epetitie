@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,37 +6,54 @@
 
 @layer base {
   body {
-    @apply font-sans bg-gov-bg text-gov-text m-0 p-0 antialiased;
+    @apply font-sans bg-evo-bg text-evo-text-main m-0 p-0 antialiased selection:bg-evo-cobalt selection:text-white;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif text-gov-primary font-semibold;
+    @apply font-display text-evo-navy font-bold tracking-tight;
   }
   
   /* Global Focus Styles for Accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-gov-cta ring-offset-2;
+    @apply outline-none ring-2 ring-evo-cobalt ring-offset-2;
   }
 }
 
 @layer components {
+  /* EVO Modular Card Style */
+  .evo-card {
+    @apply bg-white rounded-2xl border border-evo-border shadow-evo-soft transition-all duration-200 hover:shadow-evo-card;
+  }
+
+  /* EVO Digital Wallet Card */
+  .evo-wallet-card {
+    @apply bg-gradient-to-br from-evo-navy via-slate-900 to-evo-navy-light text-white rounded-2xl p-6 shadow-xl relative overflow-hidden border border-slate-700/50;
+  }
+
+  .evo-chip-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase;
+  }
+
+  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gov-cta hover:bg-gov-cta-hover transition-colors duration-200 cursor-pointer min-h-[44px] min-w-[44px];
+    @apply inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-semibold rounded-xl text-white bg-evo-cobalt hover:bg-evo-cobalt-dark active:scale-[0.99] transition-all duration-150 shadow-sm cursor-pointer min-h-[44px] min-w-[44px];
   }
   
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-gov-border text-base font-medium rounded-md text-gov-secondary bg-white hover:bg-gray-50 transition-colors duration-200 cursor-pointer min-h-[44px] min-w-[44px];
+    @apply inline-flex items-center justify-center px-5 py-2.5 border border-evo-border text-sm font-semibold rounded-xl text-evo-navy bg-white hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition-all duration-150 cursor-pointer min-h-[44px] min-w-[44px];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-xl text-evo-text-muted hover:text-evo-navy hover:bg-slate-100 transition-all duration-150 cursor-pointer;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 cursor-pointer min-h-[44px] min-w-[44px];
+    @apply inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-semibold rounded-xl text-white bg-red-600 hover:bg-red-700 active:scale-[0.99] transition-all duration-150 shadow-sm cursor-pointer min-h-[44px] min-w-[44px];
   }
 }
 
-.bg-gov-pattern {
-  background-color: #003366;
-  background-image: radial-gradient(#F2A900 0.75px, transparent 0.75px), radial-gradient(#F2A900 0.75px, #003366 0.75px);
-  background-size: 30px 30px;
-  background-position: 0 0, 15px 15px;
-  opacity: 0.98;
+/* Background gradient inspired by EVO Moldova header */
+.bg-evo-header {
+  background-color: #0F172A;
+  background-image: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
 }
