@@ -25,7 +25,7 @@ public class GeminiAiService {
     @Value("${app.gemini.api-key:your_gemini_api_key_here}")
     private String apiKey;
 
-    @Value("${app.gemini.model:gemini-1.5-flash}")
+    @Value("${app.gemini.model:gemini-3.5-flash-lite}")
     private String model;
 
     @Value("${app.gemini.api-url:https://generativelanguage.googleapis.com/v1beta/models}")
@@ -42,17 +42,31 @@ public class GeminiAiService {
 
         try {
             String prompt = """
-                Ești un asistent inteligent al administrației publice din Republica Moldova.
-                Analizează următoarea petiție depusă de un cetățean:
+                Acționezi în calitate de analist principal în cadrul Cancelariei de Stat a Republicii Moldova.
+                Misiunea ta este să analizezi și să triezi automatizat petiția unui cetățean, asigurând o clasificare corectă și un rezumat clar pentru factorii de decizie.
                 
-                TITLU: %s
-                DESCRIERE: %s
+                DATELE PETIȚIEI:
+                - TITLU: %s
+                - DESCRIERE: %s
                 
-                Răspunde STRICT în format JSON valid cu următoarea structură:
+                SARCINI:
+                1. Clasifică petiția într-una dintre următoarele categorii stricte (alege-o pe cea mai relevantă):
+                   [INFRASTRUCTURA, MEDIU, SANATATE, ADMINISTRATIE_PUBLICA, SOCIAL, EDUCATIE]
+                2. Determină prioritatea obiectivă a problemei (alege una):
+                   - LOW (probleme minore, solicitări generale)
+                   - NORMAL (probleme de zi cu zi)
+                   - HIGH (afectează un grup mare de oameni, riscuri financiare)
+                   - URGENT (pericol pentru viață/sănătate, dezastre naturale, urgențe majore)
+                3. Redactează un "Executive Briefing" (rezumat executiv) într-un ton oficial, sobru și obiectiv. Acesta trebuie să aibă exact 1-2 propoziții în limba română și să surprindă esența solicitării și impactul ei, pentru a fi citit rapid de un ministru sau primar.
+                
+                FORMAT DE RĂSPUNS:
+                Trebuie să răspunzi EXCLUSIV cu un obiect JSON valid, fără niciun alt text, formatare Markdown sau explicații suplimentare.
+                
+                Exemplu de format dorit:
                 {
-                  "category": "INFRASTRUCTURA | MEDIU | SANATATE | ADMINISTRATIE_PUBLICA | SOCIAL | EDUCATIE",
-                  "priority": "LOW | NORMAL | HIGH | URGENT",
-                  "executiveBriefing": "Rezumat executiv în 2 propoziții în limba română."
+                  "category": "INFRASTRUCTURA",
+                  "priority": "HIGH",
+                  "executiveBriefing": "Grupul de cetățeni semnalează deteriorarea gravă a podului de acces, solicitând reabilitarea urgentă. Situația prezintă un risc iminent pentru siguranța traficului local."
                 }
                 """.formatted(title, description);
 
