@@ -74,12 +74,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/public/**").permitAll()
                         // Swagger UI & OpenAPI docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        // Citizen endpoints
-                        .requestMatchers("/api/v1/citizen/**").hasAnyRole("CITIZEN", "ADMIN")
-                        // Officer endpoints
-                        .requestMatchers("/api/v1/officer/**").hasAnyRole("OFFICER", "ADMIN")
-                        // Admin endpoints
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        // Citizen & Public petition actions (allow both CITIZEN and OFFICER to sign/submit)
+                        .requestMatchers("/api/v1/citizen/**").hasAnyRole("CITIZEN", "OFFICER")
+                        // Officer back-office endpoints
+                        .requestMatchers("/api/v1/officer/**").hasRole("OFFICER")
                         .anyRequest().authenticated()
                 );
 

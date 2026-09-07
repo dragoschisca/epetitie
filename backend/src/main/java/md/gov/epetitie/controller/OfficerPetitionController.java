@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/officer/petitions")
-@PreAuthorize("hasAnyRole('OFFICER', 'ADMIN')")
+@PreAuthorize("hasRole('OFFICER')")
 public class OfficerPetitionController {
 
     private final PetitionService petitionService;
