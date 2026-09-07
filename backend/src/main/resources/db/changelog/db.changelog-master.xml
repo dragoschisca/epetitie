@@ -10,5 +10,6 @@
     <include file="db/changelog/changes/003_create_petition_signatures_table.xml"/>
     <include file="db/changelog/changes/004_create_petition_history_table.xml"/>
     <include file="db/changelog/changes/005_seed_initial_data.xml"/>
+    <include file="db/changelog/changes/006_seed_detailed_petitions.xml"/>
 
 </databaseChangeLog>

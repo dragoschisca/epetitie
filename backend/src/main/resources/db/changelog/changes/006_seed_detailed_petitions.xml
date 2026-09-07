@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="006-1" author="gov_architect">
+        <!-- Petition 1: Public Initiative - Infrastructure (Collecting signatures) -->
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="101"/>
+            <column name="tracking_number" value="PET-2026-10001"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="true"/>
+            <column name="signature_threshold" valueNumeric="100"/>
+            <column name="current_signature_count" valueNumeric="42"/>
+            <column name="category" value="INFRASTRUCTURA"/>
+            <column name="title" value="Amenajarea și modernizarea benzilor dedicate transportului public pe bd. Ștefan cel Mare și Sfânt"/>
+            <column name="description" value="Subsemnații locuitori și navetiști ai municipiului Chișinău solicităm Primăriei Mun. Chișinău și Ministerului Infrastructurii securizarea și extinderea benzilor dedicate transportului public pe bd. Ștefan cel Mare și Sfânt. În prezent, din cauza parcărilor neregulamentare și a traficului aglomerat, timpul de așteptare al troleibuzelor depășește 35 de minute în orele de vârf. Solicităm delimitarea fizică a benzilor cu piloni flexibili și instalarea camerelor video de monitorizare M-Traffic pentru sancționarea automată a încălcărilor."/>
+            <column name="status" value="COLLECTING_SIGNATURES"/>
+            <column name="priority" value="MEDIUM"/>
+            <column name="assigned_officer_id" valueNumeric="2"/>
+            <column name="ai_triage_summary" value="Petiție publică din domeniul Infrastructură cu nivel ridicat de interes comunitar. Necesită pragul de 100 de semnături. Recomandat spre avizare către Direcția Generală Mobilitate Urbană."/>
+            <column name="created_at" valueDate="2026-09-01T10:00:00"/>
+            <column name="updated_at" valueDate="2026-09-01T10:00:00"/>
+        </insert>
+
+        <!-- Petition 2: Public Initiative - Environment (Submitted, threshold reached) -->
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="102"/>
+            <column name="tracking_number" value="PET-2026-10002"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="true"/>
+            <column name="signature_threshold" valueNumeric="50"/>
+            <column name="current_signature_count" valueNumeric="58"/>
+            <column name="category" value="MEDIU"/>
+            <column name="title" value="Reforestarea și protejarea zonei umede din Rezervația Naturală Nistrul de Jos"/>
+            <column name="description" value="Solicităm Ministerului Mediului și Agenției Moldsilva oprirea imediată a defrișărilor neautorizate pe malul fluviului Nistru în sectorul raionului Ștefan Vodă și demararea unui program guvernamental de împădurire a 150 hectare de teren degradat. De asemenea, cerem instalarea punctelor fixe de monitorizare a calității apei și participarea activă a gărzilor ecologice comunitare."/>
+            <column name="status" value="SUBMITTED"/>
+            <column name="priority" value="HIGH"/>
+            <column name="submission_date" valueDate="2026-09-05T14:30:00"/>
+            <column name="deadline_date" valueDate="2026-10-05T14:30:00"/>
+            <column name="assigned_officer_id" valueNumeric="3"/>
+            <column name="ai_triage_summary" value="Inițiativă ecologică de urgență. Pragul legal de 50 de semnături a fost atins cu succes. Repartizat automat către Inspectoratul pentru Protecția Mediului cu termen de analiză 30 de zile."/>
+            <column name="created_at" valueDate="2026-09-02T11:15:00"/>
+            <column name="updated_at" valueDate="2026-09-05T14:30:00"/>
+        </insert>
+
+        <!-- Petition 3: Individual Petition - Health (In Review by Officer) -->
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="103"/>
+            <column name="tracking_number" value="PET-2026-10003"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="false"/>
+            <column name="signature_threshold" valueNumeric="0"/>
+            <column name="current_signature_count" valueNumeric="1"/>
+            <column name="category" value="SANATATE"/>
+            <column name="title" value="Digitizarea și eficientizarea eliberării certificatelor medicale pentru conducătorii auto prin MConnect"/>
+            <column name="description" value="Subsemnatul Andrei Vieru solicit Ministerului Sănătății și Agenției Guvernare Electronică eliminarea necesității prezentării fizice a fișelor medicale pe suport de hârtie la reînnoirea permisului de conducere. Solicit ca spitalele și centrele de examinare medicală să transmită direct avizele de aptitudine psihofizică în Registrul de Stat al Conducătorilor Auto prin intermediul platformei MConnect."/>
+            <column name="status" value="IN_REVIEW"/>
+            <column name="priority" value="URGENT"/>
+            <column name="submission_date" valueDate="2026-09-03T09:00:00"/>
+            <column name="deadline_date" valueDate="2026-10-03T09:00:00"/>
+            <column name="assigned_officer_id" valueNumeric="2"/>
+            <column name="ai_triage_summary" value="Demers de optimizare birocratică în domeniul Sănătate Publică și Servicii Digitale. Analizat favorabil de asistentul Gemini. În curs de examinare la Comisia de Digitalizare a Serviciilor Medicale."/>
+            <column name="created_at" valueDate="2026-09-03T09:00:00"/>
+            <column name="updated_at" valueDate="2026-09-04T15:20:00"/>
+        </insert>
+
+        <!-- Seed history records for initial petitions -->
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="101"/>
+            <column name="petition_id" valueNumeric="101"/>
+            <column name="to_status" value="COLLECTING_SIGNATURES"/>
+            <column name="note" value="Inițiativă publică creată și deschisă pentru colectare de semnături MSign."/>
+            <column name="actor_id" valueNumeric="4"/>
+            <column name="created_at" valueDate="2026-09-01T10:00:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="102"/>
+            <column name="petition_id" valueNumeric="102"/>
+            <column name="from_status" value="COLLECTING_SIGNATURES"/>
+            <column name="to_status" value="SUBMITTED"/>
+            <column name="note" value="Pragul de 50 de semnături a fost atins. Inițiativă depusă oficial către autorități."/>
+            <column name="actor_id" valueNumeric="4"/>
+            <column name="created_at" valueDate="2026-09-05T14:30:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="103"/>
+            <column name="petition_id" valueNumeric="103"/>
+            <column name="from_status" value="SUBMITTED"/>
+            <column name="to_status" value="IN_REVIEW"/>
+            <column name="note" value="Dosar preluat în examinare de Inspector Elena Munteanu."/>
+            <column name="actor_id" valueNumeric="2"/>
+            <column name="created_at" valueDate="2026-09-04T15:20:00"/>
+        </insert>
+
+        <sql dbms="postgresql">
+            SELECT setval('petitions_id_seq', (SELECT MAX(id) FROM petitions));
+            SELECT setval('petition_history_id_seq', (SELECT MAX(id) FROM petition_history));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
