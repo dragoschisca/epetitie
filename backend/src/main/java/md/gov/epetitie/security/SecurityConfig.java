@@ -69,14 +69,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/public/**").permitAll()
-                        // Swagger UI & OpenAPI docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        // Citizen & Public petition actions (allow both CITIZEN and OFFICER to sign/submit)
                         .requestMatchers("/api/v1/citizen/**").hasAnyRole("CITIZEN", "OFFICER")
-                        // Officer back-office endpoints
                         .requestMatchers("/api/v1/officer/**").hasRole("OFFICER")
                         .anyRequest().authenticated()
                 );

@@ -3,6 +3,7 @@ package md.gov.epetitie.model;
 public enum PetitionPriority {
     LOW("Scăzută"),
     NORMAL("Normală"),
+    MEDIUM("Medie"),
     HIGH("Ridicată"),
     URGENT("Urgentă");
 

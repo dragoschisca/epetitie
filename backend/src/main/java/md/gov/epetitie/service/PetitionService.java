@@ -64,6 +64,12 @@ public class PetitionService {
         // Perform Gemini AI Triage
         AiTriageResultDto triage = geminiAiService.performAutomatedTriage(dto.title(), dto.description());
 
+        // Auto-assign first available officer in system if present
+        User defaultOfficer = userRepository.findAll().stream()
+                .filter(u -> u.getRoles() != null && u.getRoles().stream().anyMatch(r -> r.getName() == RoleName.ROLE_OFFICER))
+                .findFirst()
+                .orElse(null);
+
         Petition petition = Petition.builder()
                 .trackingNumber(trackingNumber)
                 .author(author)
@@ -77,6 +83,7 @@ public class PetitionService {
                 .priority(triage.suggestedPriority() != null ? triage.suggestedPriority() : priority)
                 .submissionDate(submissionDate)
                 .deadlineDate(deadlineDate)
+                .assignedOfficer(defaultOfficer)
                 .aiTriageSummary(triage.executiveBriefingSummary())
                 .build();
 
@@ -293,13 +300,21 @@ public class PetitionService {
         return petitionRepository.findAll(spec, pageable).map(petitionMapper::toResponseDto);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PetitionDetailDto getPetitionDetails(Long id, UserPrincipal currentUser) {
         Petition petition = petitionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Petiția cu ID " + id + " nu a fost găsită."));
 
+        if (petition.getAssignedOfficer() == null && currentUser != null && currentUser.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_OFFICER"))) {
+            User officer = userRepository.findById(currentUser.getId()).orElse(null);
+            if (officer != null) {
+                petition.setAssignedOfficer(officer);
+                petition = petitionRepository.save(petition);
+            }
+        }
+
         List<PetitionHistory> history = historyRepository.findByPetitionIdOrderByCreatedAtDesc(id);
-        petition.setHistory(history);
+        // Do not set on petition to avoid orphanRemoval hibernate exception
 
         PetitionDetailDto detail = petitionMapper.toDetailDto(petition);
         boolean signed = currentUser != null && signatureRepository.existsByPetitionIdAndCitizenId(id, currentUser.getId());
@@ -310,7 +325,7 @@ public class PetitionService {
                 detail.signatureThreshold(), detail.currentSignatureCount(), detail.submissionDate(),
                 detail.deadlineDate(), detail.authorId(), detail.authorName(), detail.authorIdnp(),
                 detail.assignedOfficerId(), detail.assignedOfficerName(), detail.resolutionText(),
-                detail.aiTriageSummary(), signed, detail.daysRemaining(), detail.history(), detail.createdAt()
+                detail.aiTriageSummary(), signed, detail.daysRemaining(), petitionMapper.toHistoryDtoList(history), detail.createdAt()
         );
     }
 
@@ -323,12 +338,14 @@ public class PetitionService {
                 .orElseThrow(() -> new IllegalArgumentException("Utilizatorul nu a fost găsit."));
 
         PetitionStatus oldStatus = petition.getStatus();
-        petition.setStatus(updateDto.newStatus());
+        PetitionStatus targetStatus = updateDto.newStatus() != null ? updateDto.newStatus() : oldStatus;
+        petition.setStatus(targetStatus);
 
         if (updateDto.resolutionText() != null && !updateDto.resolutionText().isBlank()) {
             petition.setResolutionText(updateDto.resolutionText());
         }
 
+        User previousOfficer = petition.getAssignedOfficer();
         if (updateDto.assignedOfficerId() != null) {
             User officer = userRepository.findById(updateDto.assignedOfficerId())
                     .orElseThrow(() -> new IllegalArgumentException("Inspectorul desemnat nu a fost găsit."));
@@ -339,12 +356,21 @@ public class PetitionService {
 
         Petition updatedPetition = petitionRepository.save(petition);
 
+        String note = updateDto.note();
+        if (note == null || note.isBlank()) {
+            if (previousOfficer == null || (updatedPetition.getAssignedOfficer() != null && !updatedPetition.getAssignedOfficer().getId().equals(previousOfficer.getId()))) {
+                note = "Petiție repartizată inspectorului " + updatedPetition.getAssignedOfficer().getFullName();
+            } else {
+                note = "Actualizare efectuală de către " + actor.getFullName();
+            }
+        }
+
         // Record History
         PetitionHistory history = PetitionHistory.builder()
                 .petition(updatedPetition)
                 .fromStatus(oldStatus)
-                .toStatus(updateDto.newStatus())
-                .note(updateDto.note() != null ? updateDto.note() : "Status actualizat de către " + actor.getFullName())
+                .toStatus(targetStatus)
+                .note(note)
                 .actor(actor)
                 .build();
         historyRepository.save(history);
