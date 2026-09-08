@@ -9,6 +9,7 @@ import {
   PetitionStatusUpdateRequest,
   SignInitiativeResponse
 } from '../models/petition.model';
+import { User } from '../models/user.model';
 
 export interface PageResponse<T> {
   content: T[];
@@ -102,5 +103,9 @@ export class PetitionService {
 
   downloadPetitionReceiptPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/officer/petitions/${id}/pdf`, { responseType: 'blob' });
+  }
+
+  getOfficers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/officer/petitions/officers`);
   }
 }

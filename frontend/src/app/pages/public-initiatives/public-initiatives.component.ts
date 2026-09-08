@@ -17,10 +17,10 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
         <div class="relative z-10 max-w-3xl space-y-4">
           <div class="inline-flex items-center gap-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-xs font-bold px-3 py-1 rounded-full">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span>Serviciul Public Digital • Modul EVO GovTech</span>
+            <span>Serviciul public digital • Modul EVO GovTech</span>
           </div>
           <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-            Inițiative Colective & Democrație Digitală
+            Inițiative colective și democrație digitală
           </h1>
           <p class="text-slate-200 text-sm sm:text-base leading-relaxed font-normal max-w-2xl">
             Susține cauzele cetățenești din Republica Moldova cu semnătura ta electronică. La atingerea pragului legal de semnături, cererile sunt direcționate automat către instituțiile competente.
@@ -33,7 +33,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
             </div>
             <div class="flex items-center gap-2 bg-slate-800/80 px-3.5 py-2 rounded-xl border border-slate-700 font-medium">
               <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.39-2.823-1.07-4"/></svg>
-              <span>Semnătură MSign Valabilă Legal</span>
+              <span>Semnătură MSign valabilă legal</span>
             </div>
           </div>
         </div>
@@ -63,13 +63,13 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
               (change)="onSearch()"
               class="w-full sm:w-auto px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-semibold text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all"
             >
-              <option value="">Toate Categoriile</option>
-              <option value="INFRASTRUCTURA">Infrastructură & Urbanism</option>
-              <option value="MEDIU">Protecția Mediului</option>
-              <option value="SANATATE">Sănătate Publică</option>
-              <option value="ADMINISTRATIE_PUBLICA">Administrație Publică</option>
-              <option value="SOCIAL">Protecție Socială</option>
-              <option value="EDUCATIE">Educație & Cultură</option>
+              <option value="">Toate categoriile</option>
+              <option value="INFRASTRUCTURA">Infrastructură & urbanism</option>
+              <option value="MEDIU">Protecția mediului</option>
+              <option value="SANATATE">Sănătate publică</option>
+              <option value="ADMINISTRATIE_PUBLICA">Administrație publică</option>
+              <option value="SOCIAL">Protecție socială</option>
+              <option value="EDUCATIE">Educație & cultură</option>
             </select>
 
             <button
@@ -126,7 +126,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
           <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
           </div>
-          <h3 class="text-base font-bold text-evo-navy">Nicio inițiativă publică găsiți conform criteriilor</h3>
+          <h3 class="text-base font-bold text-evo-navy">Nicio inițiativă publică găsită conform criteriilor</h3>
           <p class="text-xs text-evo-text-muted max-w-sm mx-auto">Încearcă să modifici termenii de căutare sau categoria selectată pentru a vedea petițiile active.</p>
         </div>
       } @else {
@@ -156,7 +156,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                 <!-- Signature Progress Bar EVO Style -->
                 <div class="space-y-1.5">
                   <div class="flex justify-between items-center text-xs">
-                    <span class="text-evo-text-muted font-medium">Semnături Colectate:</span>
+                    <span class="text-evo-text-muted font-medium">Semnături colectate:</span>
                     <span class="font-bold text-evo-navy">
                       {{ item.currentSignatureCount }} <span class="text-slate-400 font-normal">/ {{ item.signatureThreshold }} necesare</span>
                     </span>

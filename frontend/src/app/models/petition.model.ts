@@ -65,7 +65,7 @@ export interface PetitionCreateRequest {
 }
 
 export interface PetitionStatusUpdateRequest {
-  newStatus: PetitionStatus;
+  newStatus?: PetitionStatus;
   resolutionText?: string;
   note?: string;
   assignedOfficerId?: number;

@@ -35,10 +35,10 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
         <div class="text-center space-y-2">
           <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-evo-cobalt-light text-evo-cobalt text-xs font-bold rounded-full border border-blue-100">
             <span class="w-2 h-2 rounded-full bg-evo-cobalt"></span>
-            <span>Înregistrare MConnect / MPass Portal</span>
+            <span>Înregistrare portal MPass</span>
           </div>
-          <h1 class="text-2xl font-black text-evo-navy tracking-tight">Creare Cont Cetățean</h1>
-          <p class="text-xs text-evo-text-muted">Validare Algoritmică IDNP Republica Moldova (13 cifre)</p>
+          <h1 class="text-2xl font-black text-evo-navy tracking-tight">Creare cont cetățean</h1>
+          <p class="text-xs text-evo-text-muted">Validare algoritmică IDNP Republica Moldova (13 cifre)</p>
         </div>
 
         @if (errorMessage) {
@@ -52,7 +52,7 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
           <!-- IDNP Field with live validation feedback -->
           <div class="space-y-1.5">
             <label for="idnp" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">
-              IDNP Solicitant (13 Cifre) <span class="text-red-500">*</span>
+              IDNP solicitant (13 cifre) <span class="text-red-500">*</span>
             </label>
             <div class="relative">
               <input
@@ -71,7 +71,7 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
               @if (idnpControl?.valid && idnpControl?.touched) {
                 <span class="absolute right-3.5 top-2.5 text-emerald-600 text-xs font-bold flex items-center gap-1">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                  <span>IDNP Valid</span>
+                  <span>IDNP valid</span>
                 </span>
               }
             </div>
@@ -99,7 +99,7 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label for="username" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Nume Utilizator <span class="text-red-500">*</span></label>
+              <label for="username" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Nume de utilizator <span class="text-red-500">*</span></label>
               <input id="username" type="text" formControlName="username" placeholder="andrei_v" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
             </div>
             <div class="space-y-1.5">
@@ -109,12 +109,12 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
           </div>
 
           <div class="space-y-1.5">
-            <label for="email" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Adresă Email <span class="text-red-500">*</span></label>
+            <label for="email" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Adresă email <span class="text-red-500">*</span></label>
             <input id="email" type="email" formControlName="email" placeholder="andrei.v@gmail.com" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
           </div>
 
           <div class="space-y-1.5">
-            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Parolă (Min. 8 caractere) <span class="text-red-500">*</span></label>
+            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Parolă (min. 8 caractere) <span class="text-red-500">*</span></label>
             <input id="password" type="password" formControlName="password" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
           </div>
 
@@ -128,14 +128,14 @@ export function moldovanIdnpValidator(control: AbstractControl): ValidationError
                 <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <span>Se procesează înregistrarea...</span>
               } @else {
-                <span>Creează Cont Cetățean MPass</span>
+                <span>Creează cont cetățean MPass</span>
               }
             </button>
           </div>
         </form>
 
         <div class="text-center text-xs text-evo-text-muted pt-2 border-t border-evo-border">
-          Ai deja cont înregistrat?
+          Aveți deja cont înregistrat?
           <a routerLink="/login" class="text-evo-cobalt font-bold hover:underline ml-1">Autentifică-te aici</a>
         </div>
       </div>

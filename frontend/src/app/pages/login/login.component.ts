@@ -18,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
           </div>
           <div class="space-y-1">
             <h1 class="text-2xl font-black text-evo-navy tracking-tight">Autentificare MPass</h1>
-            <p class="text-xs text-evo-text-muted">Serviciul Guvernamental de Autentificare și Control al Accesului</p>
+            <p class="text-xs text-evo-text-muted">Serviciul guvernamental de autentificare și control al accesului</p>
           </div>
         </div>
 
@@ -32,7 +32,7 @@ import { AuthService } from '../../services/auth.service';
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
           <div class="space-y-1.5">
             <label for="usernameOrEmail" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">
-              Nume Utilizator / Email MPass
+              Nume de utilizator / email MPass
             </label>
             <input
               id="usernameOrEmail"
@@ -74,7 +74,7 @@ import { AuthService } from '../../services/auth.service';
         <div class="bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs space-y-2">
           <div class="font-bold text-evo-navy flex items-center gap-1.5">
             <svg class="w-4 h-4 text-evo-cobalt" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>Conturi Demonstrative Demo:</span>
+            <span>Conturi demonstrative de test:</span>
           </div>
           <div class="space-y-1 text-evo-text-muted font-mono text-[11px]">
             <div><strong>Cetățean:</strong> <code>citizen_andrei</code> / <code>Password2026!</code></div>
@@ -83,8 +83,8 @@ import { AuthService } from '../../services/auth.service';
         </div>
 
         <div class="text-center text-xs text-evo-text-muted pt-2 border-t border-evo-border">
-          Nu ai cont MPass înregistrat?
-          <a routerLink="/register" class="text-evo-cobalt font-bold hover:underline ml-1">Înregistrare Cetățean (IDNP)</a>
+          Nu aveți cont MPass înregistrat?
+          <a routerLink="/register" class="text-evo-cobalt font-bold hover:underline ml-1">Înregistrare cetățean (IDNP)</a>
         </div>
       </div>
     </div>

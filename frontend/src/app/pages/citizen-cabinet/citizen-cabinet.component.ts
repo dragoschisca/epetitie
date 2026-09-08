@@ -66,9 +66,9 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
           <div class="space-y-2">
             <div class="inline-flex items-center gap-1.5 text-xs font-bold text-evo-cobalt bg-evo-cobalt-light px-2.5 py-1 rounded-lg">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>Serviciul de Petiționare</span>
+              <span>Serviciul de petiționare</span>
             </div>
-            <h3 class="text-lg font-bold text-evo-navy">Inițiază un Demers Oficial</h3>
+            <h3 class="text-lg font-bold text-evo-navy">Inițiază un demers oficial</h3>
             <p class="text-xs text-evo-text-muted leading-relaxed">
               Depune o petiție individuală sau creează o inițiativă publică colectivă pentru comunitatea ta.
             </p>
@@ -80,7 +80,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
             aria-label="Depune o nouă petiție sau inițiativă"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>Depune Solicitare Nouă</span>
+            <span>Depune o solicitare nouă</span>
           </button>
         </div>
       </div>
@@ -95,7 +95,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
           [attr.aria-selected]="activeTab === 'authored'"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>Petițiile Mele Depuse</span>
+          <span>Petițiile mele depuse</span>
           <span class="px-2 py-0.5 text-xs rounded-full bg-white/20 font-mono">{{ authoredCount }}</span>
         </button>
 
@@ -107,7 +107,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
           [attr.aria-selected]="activeTab === 'supported'"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-          <span>Inițiative Semnate</span>
+          <span>Inițiative semnate</span>
           <span class="px-2 py-0.5 text-xs rounded-full bg-white/20 font-mono">{{ supportedCount }}</span>
         </button>
       </div>
@@ -124,8 +124,8 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
             <div class="w-14 h-14 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center">
               <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
             </div>
-            <h3 class="text-base font-bold text-evo-navy">Nu ai nicio petiție sau inițiativă depusă</h3>
-            <p class="text-xs text-evo-text-muted max-w-sm mx-auto">Folosește butonul „Depune Solicitare Nouă” pentru a crea prima ta petiție oficială.</p>
+            <h3 class="text-base font-bold text-evo-navy">Nu aveți nicio petiție sau inițiativă depusă</h3>
+            <p class="text-xs text-evo-text-muted max-w-sm mx-auto">Folosește butonul „Depune o solicitare nouă” pentru a crea prima ta petiție oficială.</p>
           </div>
         } @else {
           <div class="evo-card overflow-hidden">
@@ -133,12 +133,12 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
               <table class="w-full text-left text-xs sm:text-sm border-collapse">
                 <thead class="bg-slate-50 text-evo-navy font-bold uppercase text-[11px] tracking-wider border-b border-evo-border">
                   <tr>
-                    <th class="p-4">Cod Urmărire</th>
-                    <th class="p-4">Titlu & Categorie</th>
-                    <th class="p-4">Tip Demers</th>
-                    <th class="p-4">Statut Oficial</th>
-                    <th class="p-4">Data Inregistrării</th>
-                    <th class="p-4">Termen Soluționare</th>
+                    <th class="p-4">Cod de urmărire</th>
+                    <th class="p-4">Titlu și categorie</th>
+                    <th class="p-4">Tip de demers</th>
+                    <th class="p-4">Statut oficial</th>
+                    <th class="p-4">Data înregistrării</th>
+                    <th class="p-4">Termen de soluționare</th>
                     <th class="p-4 text-center">Acțiuni</th>
                   </tr>
                 </thead>
@@ -240,9 +240,9 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                 </div>
                 <div>
                   <h3 class="text-lg font-extrabold text-evo-navy">
-                    {{ editingPetitionId ? 'Editare Petiție Digitală' : 'Depunere Solicitare Oficială' }}
+                    {{ editingPetitionId ? 'Editare petiție digitală' : 'Depunere solicitare oficială' }}
                   </h3>
-                  <p class="text-xs text-evo-text-muted">Serviciul de Petiționare EVO Moldova</p>
+                  <p class="text-xs text-evo-text-muted">Serviciul de petiționare EVO Moldova</p>
                 </div>
               </div>
               <button (click)="closeModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
@@ -253,14 +253,14 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
             <form [formGroup]="createForm" (ngSubmit)="submitPetition()" class="space-y-5">
               @if (!editingPetitionId) {
                 <div class="space-y-2">
-                  <label class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Tipul Demersului <span class="text-red-500">*</span></label>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Tipul demersului <span class="text-red-500">*</span></label>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label
                       class="p-4 rounded-2xl border cursor-pointer flex flex-col justify-between transition-all"
                       [ngClass]="createForm.get('isPublicInitiative')?.value === false ? 'border-evo-cobalt bg-evo-cobalt-light/50 ring-2 ring-evo-cobalt' : 'border-evo-border bg-white hover:border-slate-300'"
                     >
                       <input type="radio" formControlName="isPublicInitiative" [value]="false" class="sr-only" />
-                      <div class="font-bold text-sm text-evo-navy">Petiție Individuală</div>
+                      <div class="font-bold text-sm text-evo-navy">Petiție individuală</div>
                       <div class="text-xs text-evo-text-muted mt-1">Soluționare directă conform termenului de 30 de zile.</div>
                     </label>
 
@@ -269,7 +269,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                       [ngClass]="createForm.get('isPublicInitiative')?.value === true ? 'border-evo-cobalt bg-evo-cobalt-light/50 ring-2 ring-evo-cobalt' : 'border-evo-border bg-white hover:border-slate-300'"
                     >
                       <input type="radio" formControlName="isPublicInitiative" [value]="true" class="sr-only" />
-                      <div class="font-bold text-sm text-evo-navy">Inițiativă Colectivă</div>
+                      <div class="font-bold text-sm text-evo-navy">Inițiativă colectivă</div>
                       <div class="text-xs text-evo-text-muted mt-1">Se publică pentru colectare de semnături MSign.</div>
                     </label>
                   </div>
@@ -277,41 +277,41 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
 
                 @if (createForm.get('isPublicInitiative')?.value === true) {
                   <div class="space-y-1.5">
-                    <label for="threshold" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Prag Minim Semnături <span class="text-red-500">*</span></label>
+                    <label for="threshold" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Prag minim de semnături <span class="text-red-500">*</span></label>
                     <select id="threshold" formControlName="signatureThreshold" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-semibold text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all">
-                      <option [value]="50">50 Semnături (Locală / Comunitate)</option>
-                      <option [value]="100">100 Semnături (Raională / Municipală)</option>
-                      <option [value]="500">500 Semnături (Națională)</option>
+                      <option [value]="50">50 de semnături (locală / comunitate)</option>
+                      <option [value]="100">100 de semnături (raională / municipală)</option>
+                      <option [value]="500">500 de semnături (națională)</option>
                     </select>
                   </div>
                 }
               }
 
               <div class="space-y-1.5">
-                <label for="category" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Categorie Domeniu <span class="text-red-500">*</span></label>
+                <label for="category" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Categorie domeniu <span class="text-red-500">*</span></label>
                 <select id="category" formControlName="category" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-semibold text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all">
-                  <option value="INFRASTRUCTURA">Infrastructură & Dezvoltare Regională</option>
-                  <option value="MEDIU">Protecția Mediului & Resurse Naturale</option>
-                  <option value="SANATATE">Sănătate Publică & Asistență Socială</option>
-                  <option value="ADMINISTRATIE_PUBLICA">Administrație Publică & Servicii</option>
-                  <option value="SOCIAL">Protecție Socială & Muncă</option>
-                  <option value="EDUCATIE">Educație, Cultură & Cercetare</option>
+                  <option value="INFRASTRUCTURA">Infrastructură & dezvolta re regională</option>
+                  <option value="MEDIU">Protecția mediului & resurse naturale</option>
+                  <option value="SANATATE">Sănătate publică & asistență socială</option>
+                  <option value="ADMINISTRATIE_PUBLICA">Administrație publică & servicii</option>
+                  <option value="SOCIAL">Protecție socială & muncă</option>
+                  <option value="EDUCATIE">Educație, cultură & cercetare</option>
                 </select>
               </div>
 
               <div class="space-y-1.5">
-                <label for="title" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Titlu Demers <span class="text-red-500">*</span></label>
+                <label for="title" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Titlu demers <span class="text-red-500">*</span></label>
                 <input id="title" type="text" formControlName="title" placeholder="ex: Modernizarea iluminatului public pe strada Ştefan cel Mare" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all" />
               </div>
 
               <div class="space-y-1.5">
-                <label for="desc" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Conținut & Motivație Detaliată <span class="text-red-500">*</span></label>
+                <label for="desc" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Conținut și motivație detaliată <span class="text-red-500">*</span></label>
                 <textarea id="desc" formControlName="description" rows="5" placeholder="Descrieți problema, argumentele și măsurile solicitate autorităților..." class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all"></textarea>
               </div>
 
               <div class="bg-evo-cobalt-light p-4 rounded-2xl border border-blue-100 text-xs text-evo-cobalt flex items-start gap-2.5">
                 <svg class="w-5 h-5 flex-shrink-0 text-evo-cobalt" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                <span><strong>Triage Automatizat AI:</strong> Sistemul efectuează clasificarea automată a solicitării și repartizarea către inspectoratul competent.</span>
+                <span><strong>Triage automatizat AI:</strong> Sistemul efectuează clasificarea automată a solicitării și repartizarea către inspectoratul competent.</span>
               </div>
 
               <div class="flex justify-end gap-3 pt-4 border-t border-evo-border">

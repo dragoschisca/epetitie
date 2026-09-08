@@ -19,21 +19,21 @@ import { Component } from '@angular/core';
             </p>
           </div>
           <div>
-            <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-4 font-display">Temei Legal & Servicii</h2>
+            <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-4 font-display">Temei legal și servicii</h2>
             <ul class="text-sm text-slate-400 space-y-2.5" aria-label="Linkuri utile">
               <li><a href="https://evo.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-evo-cyan"></span>Ecosistemul EVO Moldova</a></li>
-              <li><a href="https://actelocale.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible">Actele Locale R. Moldova</a></li>
-              <li><a href="https://servicii.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible">Portalul Serviciilor Publice (MCatalog)</a></li>
-              <li><a href="https://mpass.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible">MPass - Autentificare Digitală</a></li>
+              <li><a href="https://actelocale.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible">Actele locale R. Moldova</a></li>
+              <li><a href="https://servicii.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible">Portalul serviciilor publice (MCatalog)</a></li>
+              <li><a href="https://mpass.gov.md" target="_blank" class="hover:text-evo-cyan transition-colors focus-visible">MPass - Autentificare digitală</a></li>
             </ul>
           </div>
           <div>
-            <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-4 font-display">Contact & Asistență</h2>
+            <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-4 font-display">Contact și asistență</h2>
             <address class="text-sm text-slate-400 space-y-2.5 not-italic">
               <p class="text-slate-300 font-medium">Cancelaria de Stat a Republicii Moldova</p>
               <p>Piața Marii Adunări Naționale nr. 1, Chișinău</p>
               <div class="pt-2">
-                <span class="text-xs text-slate-500 uppercase tracking-wide block">Linia Verde Asistență</span>
+                <span class="text-xs text-slate-500 uppercase tracking-wide block">Linia verde de asistență</span>
                 <span class="font-bold text-evo-cyan text-base">0800 01 234</span>
               </div>
               <p><a href="mailto:suport.petitie@gov.md" class="hover:text-evo-cyan transition-colors focus-visible">suport.petitie&#64;gov.md</a></p>
@@ -44,7 +44,7 @@ import { Component } from '@angular/core';
           <p>© 2026 Guvernul Republicii Moldova • Ecosistemul Guvernamental EVO</p>
           <p class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Sistem Operațional • Standard Security Level III
+            Sistem operațional • Nivel de securitate III
           </p>
         </div>
       </div>

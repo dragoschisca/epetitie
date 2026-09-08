@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PetitionService } from '../../services/petition.service';
 import { AuthService } from '../../services/auth.service';
 import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } from '../../models/petition.model';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-officer-dashboard',
@@ -16,23 +17,23 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
         <div class="space-y-2 max-w-2xl">
           <div class="flex items-center gap-2">
             <span class="px-3 py-1 bg-rose-500/20 text-rose-300 border border-rose-400/40 text-xs font-bold rounded-full uppercase tracking-wider">
-              Acces Restricționat Inspectorat
+              Acces restricționat inspectorat
             </span>
             <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
           </div>
           <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
-            Ghișeu Inspector • Audit & Rezoluție
+            Ghișeu inspector: audit și rezoluție
           </h1>
           <p class="text-xs sm:text-sm text-slate-200">
-            Inspector: <strong class="text-white font-bold">{{ authService.currentUserSignal()?.fullName }}</strong> • Departamentul: <span class="text-cyan-300 font-bold">{{ authService.currentUserSignal()?.department || 'Infrastructură & Dezvoltare Regională' }}</span>
+            Inspector: <strong class="text-white font-bold">{{ authService.currentUserSignal()?.fullName }}</strong> • Departamentul: <span class="text-cyan-300 font-bold">{{ authService.currentUserSignal()?.department || 'Infrastructură și dezvoltare regională' }}</span>
           </p>
         </div>
 
         <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-2xl text-xs space-y-1">
-          <div class="text-slate-300 font-medium">Termen Limită Legal SLA (Cod Admin. RM):</div>
+          <div class="text-slate-300 font-medium">Termen limită legal SLA (Cod admin. RM):</div>
           <div class="font-bold text-cyan-300 text-sm flex items-center gap-1.5">
             <svg class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>30 Zile Calendaristice</span>
+            <span>30 zile calendaristice</span>
           </div>
         </div>
       </div>
@@ -42,7 +43,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
         <!-- Total -->
         <div class="evo-card p-5 flex items-center justify-between">
           <div>
-            <div class="text-xs font-bold text-evo-text-muted uppercase tracking-wider">Total Registru</div>
+            <div class="text-xs font-bold text-evo-text-muted uppercase tracking-wider">Total registru</div>
             <div class="text-2xl font-black text-evo-navy mt-1">{{ totalElements }}</div>
           </div>
           <div class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center">
@@ -53,7 +54,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
         <!-- In Review -->
         <div class="evo-card p-5 flex items-center justify-between">
           <div>
-            <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">În Examinare</div>
+            <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">În examinare</div>
             <div class="text-2xl font-black text-amber-600 mt-1">{{ inReviewCount }}</div>
           </div>
           <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
@@ -64,7 +65,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
         <!-- Critical SLA -->
         <div class="evo-card p-5 flex items-center justify-between">
           <div>
-            <div class="text-xs font-bold text-rose-600 uppercase tracking-wider">Atenție SLA (&lt;7 Zile)</div>
+            <div class="text-xs font-bold text-rose-600 uppercase tracking-wider">Atenție SLA (&lt;7 zile)</div>
             <div class="text-2xl font-black text-rose-600 mt-1">{{ criticalSlaCount }}</div>
           </div>
           <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
@@ -101,20 +102,27 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
 
         <div class="flex flex-wrap gap-2.5 w-full md:w-auto items-center">
           <select [(ngModel)]="statusFilter" (change)="loadPetitions()" class="px-3.5 py-2 bg-slate-50 border border-evo-border rounded-xl text-xs font-semibold text-evo-navy focus:bg-white transition-all">
-            <option value="">Toate Statusurile</option>
-            <option value="SUBMITTED">Inregistrate / Depuse</option>
-            <option value="IN_REVIEW">În Examinare</option>
+            <option value="">Toate statusurile</option>
+            <option value="SUBMITTED">Înregistrate / depuse</option>
+            <option value="IN_REVIEW">În examinare</option>
             <option value="REDIRECTED">Redirecționate</option>
             <option value="RESOLVED">Soluționate</option>
             <option value="REJECTED">Respinse</option>
           </select>
 
           <select [(ngModel)]="categoryFilter" (change)="loadPetitions()" class="px-3.5 py-2 bg-slate-50 border border-evo-border rounded-xl text-xs font-semibold text-evo-navy focus:bg-white transition-all">
-            <option value="">Toate Categoriile</option>
+            <option value="">Toate categoriile</option>
             <option value="INFRASTRUCTURA">Infrastructură</option>
             <option value="MEDIU">Mediu</option>
             <option value="SANATATE">Sănătate</option>
-            <option value="ADMINISTRATIE_PUBLICA">Administrație Publică</option>
+            <option value="ADMINISTRATIE_PUBLICA">Administrație publică</option>
+          </select>
+
+          <select [(ngModel)]="officerFilter" (change)="loadPetitions()" class="px-3.5 py-2 bg-slate-50 border border-evo-border rounded-xl text-xs font-semibold text-evo-navy focus:bg-white transition-all">
+            <option [ngValue]="''">Toți inspectorii</option>
+            @for (off of officers; track off.id) {
+              <option [ngValue]="off.id">{{ off.fullName }}</option>
+            }
           </select>
 
           <button (click)="loadPetitions()" class="btn-primary text-xs py-2 px-4">
@@ -140,11 +148,12 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
               <thead class="bg-slate-50 text-evo-navy font-bold uppercase text-[11px] tracking-wider border-b border-evo-border">
                 <tr>
                   <th class="p-4">Urgență SLA</th>
-                  <th class="p-4">Nr. Tracking</th>
+                  <th class="p-4">Nr. de urmărire</th>
                   <th class="p-4">Solicitant</th>
-                  <th class="p-4">Titlu & Categorie</th>
-                  <th class="p-4">Status Curent</th>
-                  <th class="p-4 text-right">Acțiuni Inspector</th>
+                  <th class="p-4">Inspector desemnat</th>
+                  <th class="p-4">Titlu și categorie</th>
+                  <th class="p-4">Status curent</th>
+                  <th class="p-4 text-right">Acțiuni inspector</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-evo-border">
@@ -162,7 +171,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
                           </span>
                         } @else {
                           <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] rounded-lg inline-block">
-                            În Termen ({{ item.daysRemaining }}z)
+                            În termen ({{ item.daysRemaining }}z)
                           </span>
                         }
                       } @else {
@@ -172,6 +181,15 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
 
                     <td class="p-4 font-mono font-bold text-evo-cobalt">#{{ item.trackingNumber }}</td>
                     <td class="p-4 font-semibold text-evo-navy">{{ item.authorName }}</td>
+                    <td class="p-4">
+                      @if (item.assignedOfficerName) {
+                        <span class="px-2.5 py-1 bg-cyan-50 text-cyan-800 font-medium rounded-lg border border-cyan-200 text-[11px]">
+                          {{ item.assignedOfficerName }}
+                        </span>
+                      } @else {
+                        <span class="text-slate-400 italic text-[11px]">Nerepartizat</span>
+                      }
+                    </td>
                     <td class="p-4">
                       <div class="font-bold text-evo-navy max-w-xs truncate">{{ item.title }}</div>
                       <div class="text-[10px] text-evo-text-muted">{{ item.category }}</div>
@@ -186,12 +204,12 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
                         (click)="inspectPetition(item.id)"
                         class="btn-primary text-xs py-1.5 px-3"
                       >
-                        Examinare Dosar & AI
+                        Examinare dosar și AI
                       </button>
                       <button
                         (click)="downloadPdf(item.id)"
                         class="btn-secondary text-xs py-1.5 px-2.5"
-                        title="Descarcă Recipisă PDF"
+                        title="Descarcă recipisă PDF"
                       >
                         📄 PDF
                       </button>
@@ -223,13 +241,17 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
             </div>
 
             <!-- Solicitant & Content Info Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs">
               <div>
-                <span class="text-evo-text-muted font-medium block mb-0.5">Solicitant / Petiționar:</span>
+                <span class="text-evo-text-muted font-medium block mb-0.5">Solicitant / petiționar:</span>
                 <span class="font-bold text-evo-navy">{{ selectedDetail.authorName }}</span> (IDNP: {{ selectedDetail.authorIdnp || 'N/A' }})
               </div>
               <div>
-                <span class="text-evo-text-muted font-medium block mb-0.5">Data Înregistrării & Termen SLA:</span>
+                <span class="text-evo-text-muted font-medium block mb-0.5">Inspector desemnat:</span>
+                <span class="font-bold text-evo-navy">{{ selectedDetail.assignedOfficerName || 'Nerepartizat' }}</span>
+              </div>
+              <div>
+                <span class="text-evo-text-muted font-medium block mb-0.5">Data înregistrării & termen SLA:</span>
                 <span class="font-bold text-evo-navy">{{ selectedDetail.submissionDate | date:'dd.MM.yyyy HH:mm' }}</span> (Termen: {{ selectedDetail.deadlineDate | date:'dd.MM.yyyy' }})
               </div>
             </div>
@@ -238,7 +260,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
             <div class="space-y-1.5">
               <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <svg class="w-4 h-4 text-evo-cobalt" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                <span>Conținut & Descriere Solicitare:</span>
+                <span>Conținutul și descrierea solicitării:</span>
               </h4>
               <div class="text-sm text-slate-900 bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-sm leading-relaxed whitespace-pre-line font-medium">
                 {{ selectedDetail.description }}
@@ -250,7 +272,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs">
                   <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                  <span>Analiză Executivă Gemini AI Triage</span>
+                  <span>Analiză executivă Gemini AI triage</span>
                 </div>
                 <span class="text-[10px] bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 px-2.5 py-0.5 rounded-full font-bold">Model Gemini 1.5 Flash</span>
               </div>
@@ -262,7 +284,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
             <!-- Gemini AI Resolution Generator Button & Draft Box -->
             <div class="border-t border-evo-border pt-4 space-y-3">
               <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                <h4 class="text-xs font-bold text-evo-navy uppercase tracking-wider">Asistent Decizie Administrativă</h4>
+                <h4 class="text-xs font-bold text-evo-navy uppercase tracking-wider">Asistent decizie administrativă</h4>
                 <button
                   (click)="generateAiResolutionDraft()"
                   [disabled]="isAiGenerating"
@@ -270,10 +292,10 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
                 >
                   @if (isAiGenerating) {
                     <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    <span>Generare Proiect Rezoluție...</span>
+                    <span>Generare proiect rezoluție...</span>
                   } @else {
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                    <span>Generare Decizie cu AI (Gemini)</span>
+                    <span>Generare decizie cu AI (Gemini)</span>
                   }
                 </button>
               </div>
@@ -281,7 +303,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
               @if (aiResolutionDraft) {
                 <div class="bg-amber-50/80 border border-amber-200 p-4 rounded-2xl text-xs space-y-2">
                   <div class="font-bold text-amber-950 flex justify-between items-center">
-                    <span>Proiect Rezoluție Elaborat de AI:</span>
+                    <span>Proiect rezoluție elaborat de AI:</span>
                     <span class="text-[10px] text-amber-800 font-mono bg-amber-100 px-2 py-0.5 rounded-md">{{ aiResolutionDraft.legalBasisReference }}</span>
                   </div>
                   <pre class="font-sans whitespace-pre-wrap text-slate-800 bg-white p-3.5 rounded-xl border border-amber-200 text-xs leading-relaxed">{{ aiResolutionDraft.draftResolutionText }}</pre>
@@ -292,29 +314,39 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
               }
             </div>
 
-            <!-- Status Transition & Resolution Form -->
+            <!-- Status Transition & Inspector Attribution Form -->
             <div class="border-t border-evo-border pt-4 space-y-4">
-              <h4 class="text-xs font-bold text-evo-navy uppercase tracking-wider">Tranziție Status & Rezoluție Finală</h4>
+              <h4 class="text-xs font-bold text-evo-navy uppercase tracking-wider">Atribuire inspector & tranziție status</h4>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-evo-navy">Actualizare Status:</label>
-                  <select [(ngModel)]="newStatus" class="w-full px-3.5 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-xs font-bold text-evo-navy focus:bg-white transition-all">
-                    <option value="IN_REVIEW">În Examinare</option>
-                    <option value="REDIRECTED">Redirecționat altui Departament</option>
-                    <option value="RESOLVED">Soluționat Aprobant</option>
-                    <option value="REJECTED">Respins (Motivat)</option>
+                  <label class="block text-xs font-semibold text-evo-navy">Atribuire inspector:</label>
+                  <select [(ngModel)]="selectedOfficerId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-xs font-bold text-evo-navy focus:bg-white transition-all">
+                    <option [ngValue]="null">Implicit (sau neschimbat)</option>
+                    @for (off of officers; track off.id) {
+                      <option [ngValue]="off.id">{{ off.fullName }}</option>
+                    }
                   </select>
                 </div>
 
                 <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-evo-navy">Notă Internă Audit:</label>
+                  <label class="block text-xs font-semibold text-evo-navy">Actualizare status:</label>
+                  <select [(ngModel)]="newStatus" class="w-full px-3.5 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-xs font-bold text-evo-navy focus:bg-white transition-all">
+                    <option value="IN_REVIEW">În examinare</option>
+                    <option value="REDIRECTED">Redirecționat altui departament</option>
+                    <option value="RESOLVED">Soluționat aprobant</option>
+                    <option value="REJECTED">Respins (motivat)</option>
+                  </select>
+                </div>
+
+                <div class="space-y-1">
+                  <label class="block text-xs font-semibold text-evo-navy">Notă internă audit:</label>
                   <input type="text" [(ngModel)]="statusNote" placeholder="ex: Verificări efectuate de inspector la teren." class="w-full px-3.5 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-xs font-medium focus:bg-white transition-all" />
                 </div>
               </div>
 
               <div class="space-y-1">
-                <label class="block text-xs font-semibold text-evo-navy">Rezoluție Administrativă Oficială (Dispozitiv Decizie):</label>
+                <label class="block text-xs font-semibold text-evo-navy">Rezoluție administrativă oficială (dispozitiv decizie):</label>
                 <textarea [(ngModel)]="resolutionText" rows="4" placeholder="Introduceți textul deciziei finale transmis petiționarului..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-xs font-sans text-evo-navy focus:bg-white transition-all"></textarea>
               </div>
 
@@ -324,7 +356,7 @@ import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } f
                   @if (isSavingStatus) {
                     <span>Se salvează decizia...</span>
                   } @else {
-                    <span>Salvează Decizia Oficială</span>
+                    <span>Salvează decizia oficială</span>
                   }
                 </button>
               </div>
@@ -340,6 +372,7 @@ export class OfficerDashboardComponent implements OnInit {
   private petitionService = inject(PetitionService);
 
   petitions: PetitionResponse[] = [];
+  officers: User[] = [];
   isLoading = false;
   totalElements = 0;
   inReviewCount = 0;
@@ -349,26 +382,38 @@ export class OfficerDashboardComponent implements OnInit {
   searchKeyword = '';
   statusFilter = '';
   categoryFilter = '';
+  officerFilter: number | '' = '';
 
   selectedDetail: PetitionDetail | null = null;
   aiResolutionDraft: AiResolutionDraft | null = null;
   isAiGenerating = false;
 
   newStatus: PetitionStatus = 'IN_REVIEW';
+  selectedOfficerId: number | null = null;
   resolutionText = '';
   statusNote = '';
   isSavingStatus = false;
 
   ngOnInit() {
+    this.loadOfficers();
     this.loadPetitions();
+  }
+
+  loadOfficers() {
+    this.petitionService.getOfficers().subscribe({
+      next: (list) => this.officers = list,
+      error: (err) => console.error('Nu s-a putut încărca lista de inspectori:', err)
+    });
   }
 
   loadPetitions() {
     this.isLoading = true;
+    const filterOfficerId = typeof this.officerFilter === 'number' ? this.officerFilter : undefined;
     this.petitionService.searchPetitionsOfficer({
       search: this.searchKeyword,
       status: this.statusFilter,
-      category: this.categoryFilter
+      category: this.categoryFilter,
+      assignedOfficerId: filterOfficerId
     }).subscribe({
       next: (res) => {
         this.petitions = res.content;
@@ -389,6 +434,7 @@ export class OfficerDashboardComponent implements OnInit {
       next: (detail) => {
         this.selectedDetail = detail;
         this.newStatus = detail.status;
+        this.selectedOfficerId = detail.assignedOfficerId || null;
         this.resolutionText = detail.resolutionText || '';
         this.statusNote = '';
         this.aiResolutionDraft = null;
@@ -430,7 +476,8 @@ export class OfficerDashboardComponent implements OnInit {
     this.petitionService.updatePetitionStatus(this.selectedDetail.id, {
       newStatus: this.newStatus,
       resolutionText: this.resolutionText,
-      note: this.statusNote
+      note: this.statusNote,
+      assignedOfficerId: this.selectedOfficerId || undefined
     }).subscribe({
       next: (updatedDetail) => {
         this.isSavingStatus = false;

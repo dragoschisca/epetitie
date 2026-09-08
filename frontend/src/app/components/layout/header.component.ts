@@ -12,17 +12,23 @@ import { AuthService } from '../../services/auth.service';
     <div class="bg-evo-navy text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
       <div class="max-w-6xl mx-auto flex justify-between items-center">
         <div class="flex items-center space-x-3 font-medium">
-          <!-- Moldovan Flag Badge -->
-          <div class="flex h-3.5 w-5 rounded-xs overflow-hidden border border-white/20 shadow-xs" aria-hidden="true">
-            <div class="w-1/3 bg-[#003366]"></div>
-            <div class="w-1/3 bg-[#F2A900]"></div>
-            <div class="w-1/3 bg-[#CC092F]"></div>
+          <!-- Official Flag of Moldova Badge with Coat of Arms -->
+          <div class="flex h-3.5 w-5 rounded-xs overflow-hidden border border-white/30 shadow-xs relative" title="Drapelul Republicii Moldova">
+            <div class="w-1/3 bg-[#002B7F]"></div>
+            <div class="w-1/3 bg-[#FCD116] relative flex items-center justify-center">
+              <svg class="w-2.5 h-2.5" viewBox="0 0 100 100" fill="none">
+                <path d="M50 15 L35 35 L45 35 L40 60 L50 50 L60 60 L55 35 L65 35 Z" fill="#8B4513"/>
+                <rect x="42" y="38" width="16" height="18" fill="#D21034" rx="2"/>
+                <polygon points="50,42 46,50 54,50" fill="#FCD116"/>
+              </svg>
+            </div>
+            <div class="w-1/3 bg-[#CE1126]"></div>
           </div>
-          <span class="text-slate-200 font-semibold tracking-wide">GUVERNUL REPUBLICII MOLDOVA</span>
+          <span class="text-slate-200 font-semibold tracking-wide">Guvernul Republicii Moldova</span>
           <span class="hidden sm:inline-block text-slate-600">•</span>
           <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-evo-cobalt/10 text-evo-cyan text-[11px] font-semibold border border-evo-cyan/20">
             <span class="w-1.5 h-1.5 rounded-full bg-evo-cyan animate-pulse"></span>
-            Ecosystem EVO Moldova
+            Ecosistemul EVO Moldova
           </span>
         </div>
         <div class="flex items-center space-x-4 text-slate-300">
@@ -49,24 +55,24 @@ import { AuthService } from '../../services/auth.service';
               <span class="text-lg font-bold text-evo-navy tracking-tight group-hover:text-evo-cobalt transition-colors">e-Petiție</span>
               <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-evo-cobalt-light text-evo-cobalt uppercase tracking-wider">EVO GovTech</span>
             </div>
-            <p class="text-xs text-evo-text-muted font-medium">Serviciul Național de Petiții Digitalizate</p>
+            <p class="text-xs text-evo-text-muted font-medium">Serviciul național de petiții digitalizate</p>
           </div>
         </a>
 
         <!-- Desktop Navigation Links -->
         <nav class="hidden md:flex items-center gap-1 font-semibold text-sm" aria-label="Meniu principal">
           <a routerLink="/public-initiatives" routerLinkActive="bg-evo-cobalt-light text-evo-cobalt font-bold shadow-xs" class="px-4 py-2 rounded-xl text-evo-text-muted hover:text-evo-navy hover:bg-slate-50 transition-all">
-            Inițiative Publice
+            Inițiative publice
           </a>
           @if (authService.isAuthenticated()) {
             <a routerLink="/citizen-cabinet" routerLinkActive="bg-evo-cobalt-light text-evo-cobalt font-bold shadow-xs" class="px-4 py-2 rounded-xl text-evo-text-muted hover:text-evo-navy hover:bg-slate-50 transition-all flex items-center gap-2">
-              <span>Cabinet Cetățean</span>
+              <span>Cabinet cetățean</span>
               <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
             </a>
             @if (authService.isOfficer()) {
               <a routerLink="/officer-dashboard" routerLinkActive="bg-rose-50 text-rose-700 font-bold border border-rose-200" class="px-4 py-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-all flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                <span>Ghișeu Inspector</span>
+                <span>Ghișeu inspector</span>
               </a>
             }
           }
@@ -137,3 +143,4 @@ export class HeaderComponent {
     this.authService.logout();
   }
 }
+
