@@ -61,6 +61,15 @@ public class CitizenPetitionController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/{id}/unsign")
+    public ResponseEntity<SignInitiativeDto> unsignInitiative(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        SignInitiativeDto result = petitionService.unsignInitiative(id, currentUser);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/my-authored")
     public ResponseEntity<Page<PetitionResponseDto>> getMyAuthoredPetitions(
             @RequestParam(defaultValue = "0") int page,

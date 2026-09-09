@@ -28,21 +28,27 @@ public class PetitionService {
     private final PetitionSignatureRepository signatureRepository;
     private final PetitionHistoryRepository historyRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PetitionMapper petitionMapper;
     private final GeminiAiService geminiAiService;
+    private final OtpVerificationService otpVerificationService;
 
     public PetitionService(PetitionRepository petitionRepository,
                            PetitionSignatureRepository signatureRepository,
                            PetitionHistoryRepository historyRepository,
                            UserRepository userRepository,
+                           RoleRepository roleRepository,
                            PetitionMapper petitionMapper,
-                           GeminiAiService geminiAiService) {
+                           GeminiAiService geminiAiService,
+                           OtpVerificationService otpVerificationService) {
         this.petitionRepository = petitionRepository;
         this.signatureRepository = signatureRepository;
         this.historyRepository = historyRepository;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.petitionMapper = petitionMapper;
         this.geminiAiService = geminiAiService;
+        this.otpVerificationService = otpVerificationService;
     }
 
     @Transactional
@@ -238,6 +244,163 @@ public class PetitionService {
         return new SignInitiativeDto(petition.getId(), sigHash, updatedPetition.getCurrentSignatureCount(), enrichedDto);
     }
 
+    @Transactional
+    public SignInitiativeDto unsignInitiative(Long petitionId, UserPrincipal currentUser) {
+        Petition petition = petitionRepository.findById(petitionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inițiativa publică nu a fost găsită."));
+
+        User citizen = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Utilizatorul nu a fost găsit."));
+
+        if (!signatureRepository.existsByPetitionIdAndCitizenId(petitionId, citizen.getId())) {
+            throw new IllegalStateException("Nu ați semnat această inițiativă publică.");
+        }
+
+        signatureRepository.deleteByPetitionIdAndCitizenId(petitionId, citizen.getId());
+        petition.setCurrentSignatureCount(Math.max(0, petition.getCurrentSignatureCount() - 1));
+
+        Petition updatedPetition = petitionRepository.save(petition);
+        PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
+        PetitionResponseDto enrichedDto = new PetitionResponseDto(
+                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
+                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
+                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
+                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
+                pDto.assignedOfficerName(), pDto.aiTriageSummary(), false, pDto.daysRemaining()
+        );
+
+        return new SignInitiativeDto(petition.getId(), "", updatedPetition.getCurrentSignatureCount(), enrichedDto);
+    }
+
+    public md.gov.epetitie.dto.GuestOtpResponseDto sendGuestOtp(Long petitionId, md.gov.epetitie.dto.GuestOtpRequestDto dto) {
+        Petition petition = petitionRepository.findById(petitionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inițiativa publică nu a fost găsită."));
+
+        String code = otpVerificationService.generateAndStoreOtp(dto.target());
+        String msg = "Codul de verificare de 5 cifre a fost generat cu succes pentru " + dto.target() + ".";
+        return new md.gov.epetitie.dto.GuestOtpResponseDto(msg, dto.target(), code);
+    }
+
+    @Transactional
+    public SignInitiativeDto signGuestInitiative(Long petitionId, md.gov.epetitie.dto.GuestSignRequestDto dto) {
+        boolean validOtp = otpVerificationService.validateOtp(dto.contact(), dto.otpCode());
+        if (!validOtp) {
+            throw new IllegalArgumentException("Codul de verificare introdus este incorect sau a expirat.");
+        }
+
+        Petition petition = petitionRepository.findById(petitionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inițiativa publică nu a fost găsită."));
+
+        if (!Boolean.TRUE.equals(petition.getIsPublicInitiative())) {
+            throw new IllegalStateException("Această petiție este individuală și nu acceptă semnături publice.");
+        }
+
+        String contact = dto.contact().trim().toLowerCase();
+        User guestUser = userRepository.findByEmail(contact)
+                .orElseGet(() -> userRepository.findByUsername(contact)
+                .orElseGet(() -> createGuestUser(dto.fullName(), contact)));
+
+        if (signatureRepository.existsByPetitionIdAndCitizenId(petitionId, guestUser.getId())) {
+            throw new IllegalStateException("Acest contact a semnat deja această inițiativă publică.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        String sigHash = generateSignatureHash(guestUser.getId(), petition.getId(), now);
+
+        PetitionSignature signature = PetitionSignature.builder()
+                .petition(petition)
+                .citizen(guestUser)
+                .signedAt(now)
+                .signatureHash(sigHash)
+                .build();
+        signatureRepository.save(signature);
+
+        petition.setCurrentSignatureCount(petition.getCurrentSignatureCount() + 1);
+
+        if (petition.getCurrentSignatureCount() >= petition.getSignatureThreshold() && petition.getStatus() == PetitionStatus.COLLECTING_SIGNATURES) {
+            PetitionStatus oldStatus = petition.getStatus();
+            petition.setStatus(PetitionStatus.SUBMITTED);
+            petition.setSubmissionDate(now);
+            petition.setDeadlineDate(now.plusDays(30));
+
+            PetitionHistory history = PetitionHistory.builder()
+                    .petition(petition)
+                    .fromStatus(oldStatus)
+                    .toStatus(PetitionStatus.SUBMITTED)
+                    .note("Pragul de " + petition.getSignatureThreshold() + " semnături a fost atins prin susținere publică.")
+                    .actor(guestUser)
+                    .build();
+            historyRepository.save(history);
+        }
+
+        Petition updatedPetition = petitionRepository.save(petition);
+        PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
+        PetitionResponseDto enrichedDto = new PetitionResponseDto(
+                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
+                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
+                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
+                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
+                pDto.assignedOfficerName(), pDto.aiTriageSummary(), true, pDto.daysRemaining()
+        );
+
+        return new SignInitiativeDto(petition.getId(), sigHash, updatedPetition.getCurrentSignatureCount(), enrichedDto);
+    }
+
+    @Transactional
+    public SignInitiativeDto unsignGuestInitiative(Long petitionId, md.gov.epetitie.dto.GuestUnsignRequestDto dto) {
+        boolean validOtp = otpVerificationService.validateOtp(dto.contact(), dto.otpCode());
+        if (!validOtp) {
+            throw new IllegalArgumentException("Codul de verificare introdus este incorect sau a expirat.");
+        }
+
+        Petition petition = petitionRepository.findById(petitionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inițiativa publică nu a fost găsită."));
+
+        String contact = dto.contact().trim().toLowerCase();
+        User guestUser = userRepository.findByEmail(contact)
+                .orElseGet(() -> userRepository.findByUsername(contact).orElse(null));
+
+        if (guestUser == null || !signatureRepository.existsByPetitionIdAndCitizenId(petitionId, guestUser.getId())) {
+            throw new IllegalStateException("Nu s-a găsit nicio semnătură înregistrată pentru acest contact.");
+        }
+
+        signatureRepository.deleteByPetitionIdAndCitizenId(petitionId, guestUser.getId());
+        petition.setCurrentSignatureCount(Math.max(0, petition.getCurrentSignatureCount() - 1));
+
+        Petition updatedPetition = petitionRepository.save(petition);
+        PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
+        PetitionResponseDto enrichedDto = new PetitionResponseDto(
+                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
+                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
+                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
+                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
+                pDto.assignedOfficerName(), pDto.aiTriageSummary(), false, pDto.daysRemaining()
+        );
+
+        return new SignInitiativeDto(petition.getId(), "", updatedPetition.getCurrentSignatureCount(), enrichedDto);
+    }
+
+    private User createGuestUser(String fullName, String contact) {
+        String username = contact.contains("@") ? contact : "phone_" + contact.replaceAll("[^0-9]", "");
+        String email = contact.contains("@") ? contact : username + "@guest.epetitie.gov.md";
+        String[] parts = fullName.trim().split("\\s+", 2);
+        String firstName = parts[0];
+        String lastName = parts.length > 1 ? parts[1] : "";
+
+        Role citizenRole = roleRepository.findByName(RoleName.ROLE_CITIZEN).orElse(null);
+
+        User guest = User.builder()
+                .username(username)
+                .email(email)
+                .passwordHash("$2a$10$GuestDummyPasswordNotUsedForAuth1234567890")
+                .firstName(firstName)
+                .lastName(lastName)
+                .roles(citizenRole != null ? java.util.Set.of(citizenRole) : java.util.Collections.emptySet())
+                .build();
+
+        return userRepository.save(guest);
+    }
+
     @Transactional(readOnly = true)
     public Page<PetitionResponseDto> getPublicInitiatives(String searchTerm, PetitionCategory category, Pageable pageable, UserPrincipal currentUser) {
         Specification<Petition> spec = PetitionSpecification.filter(category, PetitionStatus.COLLECTING_SIGNATURES, null, true, searchTerm, null, null);
@@ -319,12 +482,19 @@ public class PetitionService {
         PetitionDetailDto detail = petitionMapper.toDetailDto(petition);
         boolean signed = currentUser != null && signatureRepository.existsByPetitionIdAndCitizenId(id, currentUser.getId());
 
+        String resText = detail.resolutionText();
+        if ((resText == null || resText.isBlank()) && (petition.getStatus() == PetitionStatus.RESOLVED || petition.getStatus() == PetitionStatus.REJECTED)) {
+            resText = (petition.getStatus() == PetitionStatus.RESOLVED ?
+                    "Petiția dumneavoastră a fost examinată favorabil de către autoritățile competente. Solicitarea a fost aprobată și transmisă spre punere în aplicare conform Codului Administrativ al Republicii Moldova." :
+                    "În urma examinării dosarului administrativ, s-a constatat neîndeplinirea condițiilor legale de admisibilitate, motiv pentru care solicitarea a fost respinsă motivat conform prevederilor Codului Administrativ.");
+        }
+
         return new PetitionDetailDto(
                 detail.id(), detail.trackingNumber(), detail.title(), detail.description(),
                 detail.category(), detail.status(), detail.priority(), detail.isPublicInitiative(),
                 detail.signatureThreshold(), detail.currentSignatureCount(), detail.submissionDate(),
                 detail.deadlineDate(), detail.authorId(), detail.authorName(), detail.authorIdnp(),
-                detail.assignedOfficerId(), detail.assignedOfficerName(), detail.resolutionText(),
+                detail.assignedOfficerId(), detail.assignedOfficerName(), resText,
                 detail.aiTriageSummary(), signed, detail.daysRemaining(), petitionMapper.toHistoryDtoList(history), detail.createdAt()
         );
     }
@@ -343,6 +513,11 @@ public class PetitionService {
 
         if (updateDto.resolutionText() != null && !updateDto.resolutionText().isBlank()) {
             petition.setResolutionText(updateDto.resolutionText());
+        } else if ((targetStatus == PetitionStatus.RESOLVED || targetStatus == PetitionStatus.REJECTED) && (petition.getResolutionText() == null || petition.getResolutionText().isBlank())) {
+            String defaultResolution = (targetStatus == PetitionStatus.RESOLVED ?
+                    "Petiția dumneavoastră a fost examinată favorabil de către autoritățile competente. Solicitarea a fost aprobată și transmisă spre punere în aplicare conform Codului Administrativ al Republicii Moldova." :
+                    "În urma examinării dosarului administrativ, s-a constatat neîndeplinirea condițiilor legale de admisibilitate, motiv pentru care solicitarea a fost respinsă motivat conform prevederilor Codului Administrativ.");
+            petition.setResolutionText(defaultResolution);
         }
 
         User previousOfficer = petition.getAssignedOfficer();

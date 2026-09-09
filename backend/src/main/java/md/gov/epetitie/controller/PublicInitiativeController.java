@@ -33,4 +33,40 @@ public class PublicInitiativeController {
         Page<PetitionResponseDto> initiatives = petitionService.getPublicInitiatives(search, category, pageRequest, currentUser);
         return ResponseEntity.ok(initiatives);
     }
+
+    @GetMapping("/petitions/{id}")
+    public ResponseEntity<md.gov.epetitie.dto.PetitionDetailDto> getPublicPetitionDetail(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        md.gov.epetitie.dto.PetitionDetailDto detail = petitionService.getPetitionDetails(id, currentUser);
+        return ResponseEntity.ok(detail);
+    }
+
+    @PostMapping("/petitions/{id}/send-otp")
+    public ResponseEntity<md.gov.epetitie.dto.GuestOtpResponseDto> sendGuestOtp(
+            @PathVariable Long id,
+            @jakarta.validation.Valid @RequestBody md.gov.epetitie.dto.GuestOtpRequestDto dto
+    ) {
+        md.gov.epetitie.dto.GuestOtpResponseDto response = petitionService.sendGuestOtp(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/petitions/{id}/sign-guest")
+    public ResponseEntity<md.gov.epetitie.dto.SignInitiativeDto> signGuestInitiative(
+            @PathVariable Long id,
+            @jakarta.validation.Valid @RequestBody md.gov.epetitie.dto.GuestSignRequestDto dto
+    ) {
+        md.gov.epetitie.dto.SignInitiativeDto result = petitionService.signGuestInitiative(id, dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/petitions/{id}/unsign-guest")
+    public ResponseEntity<md.gov.epetitie.dto.SignInitiativeDto> unsignGuestInitiative(
+            @PathVariable Long id,
+            @jakarta.validation.Valid @RequestBody md.gov.epetitie.dto.GuestUnsignRequestDto dto
+    ) {
+        md.gov.epetitie.dto.SignInitiativeDto result = petitionService.unsignGuestInitiative(id, dto);
+        return ResponseEntity.ok(result);
+    }
 }

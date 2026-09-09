@@ -57,7 +57,7 @@ public class GeminiAiService {
                    - NORMAL (probleme de zi cu zi)
                    - HIGH (afectează un grup mare de oameni, riscuri financiare)
                    - URGENT (pericol pentru viață/sănătate, dezastre naturale, urgențe majore)
-                3. Redactează un "Executive Briefing" (rezumat executiv) într-un ton oficial, sobru și obiectiv. Acesta trebuie să aibă exact 1-2 propoziții în limba română și să surprindă esența solicitării și impactul ei, pentru a fi citit rapid de un ministru sau primar.
+                3. Redactează un "Executive Briefing" (rezumat executiv) într-un ton oficial, sobru și obiectiv. Acesta trebuie să aibă exact 1-2 propoziții în limba română și să surprindă esența solicitării și impactul ei. Folosește stil de scriere uman (cu majusculă doar la începutul propoziției, FĂRĂ titluri cu fiecare cuvânt capitalizat și FĂRĂ simboluri Markdown precum #, *, **, ---).
                 
                 FORMAT DE RĂSPUNS:
                 Trebuie să răspunzi EXCLUSIV cu un obiect JSON valid, fără niciun alt text, formatare Markdown sau explicații suplimentare.
@@ -75,7 +75,7 @@ public class GeminiAiService {
 
             PetitionCategory category = parseCategory(root.path("category").asText());
             PetitionPriority priority = parsePriority(root.path("priority").asText());
-            String briefing = root.path("executiveBriefing").asText("Petiție primită în examinare conform procedurii legale.");
+            String briefing = sanitizeAiText(root.path("executiveBriefing").asText("Petiție primită în examinare conform procedurii legale."));
 
             return new AiTriageResultDto(category, priority, briefing);
 
@@ -106,6 +106,10 @@ public class GeminiAiService {
                 1. Preambul și temei legal (Legea nr. 190/1997 sau Codul Administrativ nr. 116/2018).
                 2. Constatări de fapt.
                 3. Decizia/Măsurile dispuse.
+                
+                REGULI STRICTE DE REDACTARE:
+                - Scrie în stil uman natural (cu majusculă doar la începutul propozițiilor/frazelor, NU capitaliza fiecare cuvânt dintr-un titlu).
+                - Textul trebuie să fie text simplu (plain text) curat, FĂRĂ simboluri Markdown (NU folosi caractere precum #, *, **, ---, ` sau alte marcaje speciale).
                 """.formatted(
                     petition.getTrackingNumber(),
                     petition.getAuthor().getFullName(),
@@ -115,7 +119,7 @@ public class GeminiAiService {
                     petition.getDescription()
             );
 
-            String draftText = callGeminiApi(prompt);
+            String draftText = sanitizeAiText(callGeminiApi(prompt));
 
             return new AiResolutionDraftDto(
                     petition.getId(),
@@ -171,6 +175,23 @@ public class GeminiAiService {
         return text.trim();
     }
 
+    private String sanitizeAiText(String text) {
+        if (text == null) return "";
+        // Remove Markdown headers (#, ##, ###, etc.)
+        String cleaned = text.replaceAll("(?m)^\\s*#+\\s*", "");
+        // Remove Markdown bold/italic (*, **, _, __)
+        cleaned = cleaned.replaceAll("\\*\\*|\\*|__|\\_", "");
+        // Remove horizontal dividers (---, ***, ___)
+        cleaned = cleaned.replaceAll("(?m)^\\s*[-*_]{3,}\\s*$", "");
+        // Remove code blocks and backticks
+        cleaned = cleaned.replaceAll("```[a-zA-Z]*", "").replaceAll("```", "").replaceAll("`", "");
+        // Clean bullet list markers (* , - , + at start of line)
+        cleaned = cleaned.replaceAll("(?m)^\\s*[*\\-+]\s+", "• ");
+        // Normalize multiple blank lines into max 2 newlines
+        cleaned = cleaned.replaceAll("\n{3,}", "\n\n");
+        return cleaned.trim();
+    }
+
     private PetitionCategory parseCategory(String text) {
         try {
             return PetitionCategory.valueOf(text.toUpperCase());
@@ -196,10 +217,10 @@ public class GeminiAiService {
 
     private AiResolutionDraftDto fallbackResolutionDraft(Petition petition) {
         String draft = """
-            REPUBLICA MOLDOVA
-            DEPARTAMENTUL DE RESORT
+            Republica Moldova
+            Departamentul de resort
             
-            DECIZIE ADMINISTRATIVĂ (PROIECT)
+            Proiect de decizie administrativă
             Referitor la petiția nr. %s din %s
             
             Urmare a examinării petiției depuse de cetățeanul %s privind "%s", în temeiul Codului Administrativ al Republicii Moldova nr. 116/2018:

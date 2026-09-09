@@ -15,5 +15,9 @@ public interface PetitionSignatureRepository extends JpaRepository<PetitionSigna
 
     List<PetitionSignature> findByCitizenId(Long citizenId);
     
+    java.util.Optional<PetitionSignature> findByPetitionIdAndCitizenId(Long petitionId, Long citizenId);
+
+    void deleteByPetitionIdAndCitizenId(Long petitionId, Long citizenId);
+    
     void deleteAllByPetitionId(Long petitionId);
 }
