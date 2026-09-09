@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PetitionService } from '../../services/petition.service';
 import { AuthService } from '../../services/auth.service';
+import { RouterLink } from '@angular/router';
 import { PetitionCategory, PetitionResponse } from '../../models/petition.model';
 
 @Component({
   selector: 'app-citizen-cabinet',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="space-y-8">
       <!-- EVO Digital Identity / Wallet Card Section -->
@@ -145,9 +146,13 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                 <tbody class="divide-y divide-evo-border">
                   @for (item of authoredPetitions; track item.id) {
                     <tr class="hover:bg-slate-50/80 transition-colors">
-                      <td class="p-4 font-mono font-bold text-evo-cobalt">#{{ item.trackingNumber }}</td>
+                      <td class="p-4 font-mono font-bold text-evo-cobalt">
+                        <a [routerLink]="['/petition', item.id]" class="hover:underline">#{{ item.trackingNumber }}</a>
+                      </td>
                       <td class="p-4 max-w-xs">
-                        <div class="font-bold text-evo-navy text-sm truncate" [title]="item.title">{{ item.title }}</div>
+                        <a [routerLink]="['/petition', item.id]" class="font-bold text-evo-navy text-sm hover:text-evo-cobalt transition-colors line-clamp-2" [title]="item.title">
+                          {{ item.title }}
+                        </a>
                         <div class="text-evo-text-muted text-xs mt-0.5">{{ item.category }}</div>
                       </td>
                       <td class="p-4">
@@ -179,17 +184,22 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                           <span class="text-evo-text-muted">-</span>
                         }
                       </td>
-                      <td class="p-4">
-                        <div class="flex items-center justify-center gap-1">
+                      <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                          <a [routerLink]="['/petition', item.id]" class="px-3 py-1.5 bg-evo-cobalt-light text-evo-cobalt hover:bg-evo-cobalt hover:text-white font-bold rounded-xl transition-all text-xs flex items-center gap-1">
+                            <span>Vezi detalii</span>
+                            @if (item.status === 'RESOLVED') {
+                              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            }
+                          </a>
+
                           @if (item.status === 'SUBMITTED' || item.status === 'COLLECTING_SIGNATURES') {
-                            <button (click)="openEditModal(item)" class="p-1.5 text-evo-cobalt hover:bg-evo-cobalt-light rounded-lg transition-colors" title="Editează">
+                            <button (click)="openEditModal(item)" class="p-1.5 text-evo-cobalt hover:bg-slate-100 rounded-lg transition-colors" title="Editează">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </button>
                             <button (click)="deletePetition(item.id)" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Șterge">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
-                          } @else {
-                            <span class="text-xs text-slate-400 italic">În procesare</span>
                           }
                         </div>
                       </td>
@@ -213,16 +223,28 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
         } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @for (item of supportedPetitions; track item.id) {
-              <div class="evo-card p-6 space-y-3">
-                <div class="flex justify-between items-center">
-                  <span class="font-mono text-xs font-bold text-evo-cobalt bg-evo-cobalt-light px-2.5 py-1 rounded-md">#{{ item.trackingNumber }}</span>
-                  <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg border border-emerald-200">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    Semnat MSign
-                  </span>
+              <div class="evo-card p-6 flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="font-mono text-xs font-bold text-evo-cobalt bg-evo-cobalt-light px-2.5 py-1 rounded-md">#{{ item.trackingNumber }}</span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg border border-emerald-200">
+                      <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      <span>Semnat</span>
+                    </span>
+                  </div>
+                  <a [routerLink]="['/petition', item.id]" class="block group">
+                    <h4 class="font-bold text-evo-navy text-base leading-snug group-hover:text-evo-cobalt transition-colors">{{ item.title }}</h4>
+                  </a>
+                  <p class="text-xs text-evo-text-muted line-clamp-3 leading-relaxed">{{ item.description }}</p>
                 </div>
-                <h4 class="font-bold text-evo-navy text-base leading-snug">{{ item.title }}</h4>
-                <p class="text-xs text-evo-text-muted line-clamp-3 leading-relaxed">{{ item.description }}</p>
+
+                <div class="pt-3 border-t border-evo-border flex justify-between items-center">
+                  <span class="text-xs text-slate-500 font-medium">Status: <strong class="text-evo-navy">{{ item.status }}</strong></span>
+                  <a [routerLink]="['/petition', item.id]" class="btn-primary text-xs py-1.5 px-3 flex items-center gap-1">
+                    <span>Deschide detalii</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  </a>
+                </div>
               </div>
             }
           </div>

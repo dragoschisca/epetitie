@@ -143,9 +143,11 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                   </span>
                 </div>
 
-                <h2 class="text-lg font-bold text-evo-navy leading-snug hover:text-evo-cobalt transition-colors">
-                  {{ item.title }}
-                </h2>
+                <a [routerLink]="['/petition', item.id]" class="block group">
+                  <h2 class="text-lg font-bold text-evo-navy leading-snug group-hover:text-evo-cobalt transition-colors">
+                    {{ item.title }}
+                  </h2>
+                </a>
 
                 <p class="text-xs text-evo-text-muted leading-relaxed line-clamp-3">
                   {{ item.description }}
@@ -172,32 +174,37 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-2">
-                  <div class="text-xs">
-                    <span class="text-evo-text-muted">Inițiator:</span>
-                    <span class="font-semibold text-evo-navy ml-1">{{ item.authorName }}</span>
-                  </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+                  <a [routerLink]="['/petition', item.id]" class="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1">
+                    <span>Vezi detalii</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  </a>
 
-                  @if (item.hasSigned) {
-                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200">
-                      <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                      <span>Semnat MSign</span>
-                    </span>
-                  } @else {
-                    <button
-                      (click)="signInitiative(item)"
-                      [disabled]="signingId === item.id"
-                      class="btn-primary text-xs py-2 px-3.5 flex items-center gap-1.5"
-                    >
-                      @if (signingId === item.id) {
-                        <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        <span>Semnează...</span>
-                      } @else {
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                        <span>Semnează Digital</span>
-                      }
+                  <div class="flex items-center gap-2">
+                    <button (click)="sharePetition(item.id)" class="p-2 text-slate-500 hover:text-evo-navy bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors" title="Partajează ca link">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                     </button>
-                  }
+
+                    @if (item.hasSigned) {
+                      <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>Semnat</span>
+                      </span>
+                    } @else {
+                      <button
+                        (click)="signInitiative(item)"
+                        [disabled]="signingId === item.id"
+                        class="btn-primary text-xs py-1.5 px-3 flex items-center gap-1"
+                      >
+                        @if (signingId === item.id) {
+                          <span class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                          <span>...</span>
+                        } @else {
+                          <span>Semnează</span>
+                        }
+                      </button>
+                    }
+                  </div>
                 </div>
               </div>
             </div>
@@ -267,6 +274,13 @@ export class PublicInitiativesComponent implements OnInit {
         this.signingId = null;
         alert(err.error?.message || 'Nu s-a putut înregistra semnătura.');
       }
+    });
+  }
+
+  sharePetition(id: number) {
+    const url = `${window.location.origin}/petition/${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link-ul petiției a fost copiat în clipboard! Îl poți trimite oricui.');
     });
   }
 }

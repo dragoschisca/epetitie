@@ -13,17 +13,7 @@ import { AuthService } from '../../services/auth.service';
       <div class="max-w-6xl mx-auto flex justify-between items-center">
         <div class="flex items-center space-x-3 font-medium">
           <!-- Official Flag of Moldova Badge with Coat of Arms -->
-          <div class="flex h-3.5 w-5 rounded-xs overflow-hidden border border-white/30 shadow-xs relative" title="Drapelul Republicii Moldova">
-            <div class="w-1/3 bg-[#002B7F]"></div>
-            <div class="w-1/3 bg-[#FCD116] relative flex items-center justify-center">
-              <svg class="w-2.5 h-2.5" viewBox="0 0 100 100" fill="none">
-                <path d="M50 15 L35 35 L45 35 L40 60 L50 50 L60 60 L55 35 L65 35 Z" fill="#8B4513"/>
-                <rect x="42" y="38" width="16" height="18" fill="#D21034" rx="2"/>
-                <polygon points="50,42 46,50 54,50" fill="#FCD116"/>
-              </svg>
-            </div>
-            <div class="w-1/3 bg-[#CE1126]"></div>
-          </div>
+          <img src="assets/images/flag-of-moldova.png" alt="Drapelul Republicii Moldova" class="h-3.5 w-5 rounded-xs object-cover border border-white/30 shadow-xs" title="Drapelul Republicii Moldova">
           <span class="text-slate-200 font-semibold tracking-wide">Guvernul Republicii Moldova</span>
           <span class="hidden sm:inline-block text-slate-600">•</span>
           <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-evo-cobalt/10 text-evo-cyan text-[11px] font-semibold border border-evo-cyan/20">

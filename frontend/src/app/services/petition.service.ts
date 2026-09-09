@@ -35,6 +35,22 @@ export class PetitionService {
     return this.http.get<PageResponse<PetitionResponse>>(`${this.baseUrl}/public/initiatives`, { params });
   }
 
+  getPublicPetitionDetail(id: number): Observable<PetitionDetail> {
+    return this.http.get<PetitionDetail>(`${this.baseUrl}/public/petitions/${id}`);
+  }
+
+  sendGuestOtp(id: number, target: string, channel: 'EMAIL' | 'PHONE' = 'EMAIL'): Observable<{ message: string; target: string; otpCode: string }> {
+    return this.http.post<{ message: string; target: string; otpCode: string }>(`${this.baseUrl}/public/petitions/${id}/send-otp`, { target, channel });
+  }
+
+  signGuest(id: number, fullName: string, contact: string, otpCode: string): Observable<SignInitiativeResponse> {
+    return this.http.post<SignInitiativeResponse>(`${this.baseUrl}/public/petitions/${id}/sign-guest`, { fullName, contact, otpCode });
+  }
+
+  unsignGuest(id: number, contact: string, otpCode: string): Observable<SignInitiativeResponse> {
+    return this.http.post<SignInitiativeResponse>(`${this.baseUrl}/public/petitions/${id}/unsign-guest`, { contact, otpCode });
+  }
+
   // Citizen Endpoints
   createPetition(request: PetitionCreateRequest): Observable<PetitionResponse> {
     return this.http.post<PetitionResponse>(`${this.baseUrl}/citizen/petitions`, request);
@@ -50,6 +66,10 @@ export class PetitionService {
 
   signInitiative(id: number): Observable<SignInitiativeResponse> {
     return this.http.post<SignInitiativeResponse>(`${this.baseUrl}/citizen/petitions/${id}/sign`, {});
+  }
+
+  unsignInitiative(id: number): Observable<SignInitiativeResponse> {
+    return this.http.post<SignInitiativeResponse>(`${this.baseUrl}/citizen/petitions/${id}/unsign`, {});
   }
 
   getMyAuthoredPetitions(page: number = 0, size: number = 10): Observable<PageResponse<PetitionResponse>> {
