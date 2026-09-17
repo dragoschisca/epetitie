@@ -100,4 +100,22 @@ public class CitizenPetitionController {
         PetitionDetailDto detail = petitionService.getPetitionDetails(id, currentUser);
         return ResponseEntity.ok(detail);
     }
+
+    @GetMapping(value = "/{id}/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> downloadPetitionReceiptPdf(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        // Ensure the petition belongs to citizen or is accessible
+        byte[] pdfBytes = petitionService.generatePetitionReceiptPdf(id);
+
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "Recipisa_Petitie_" + id + ".pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
 }
