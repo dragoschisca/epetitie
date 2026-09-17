@@ -193,6 +193,11 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                             }
                           </a>
 
+                          <button (click)="downloadPdf(item.id)" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-evo-cobalt text-xs font-bold rounded-xl border border-blue-200 transition-all" title="Descarcă recipisă oficială PDF cu QR">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span>PDF</span>
+                          </button>
+
                           @if (item.status === 'SUBMITTED' || item.status === 'COLLECTING_SIGNATURES') {
                             <button (click)="openEditModal(item)" class="p-1.5 text-evo-cobalt hover:bg-slate-100 rounded-lg transition-colors" title="Editează">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -478,6 +483,22 @@ export class CitizenCabinetComponent implements OnInit {
         }
       });
     }
+  }
+
+  downloadPdf(id: number) {
+    this.petitionService.downloadCitizenReceiptPdf(id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Recipisa_Petitie_${id}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Nu s-a putut descărca recipisa PDF.');
+      }
+    });
   }
 
   getStatusBadgeClass(status: string): string {

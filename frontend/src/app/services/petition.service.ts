@@ -125,6 +125,10 @@ export class PetitionService {
     return this.http.get(`${this.baseUrl}/officer/petitions/${id}/pdf`, { responseType: 'blob' });
   }
 
+  downloadCitizenReceiptPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/citizen/petitions/${id}/pdf`, { responseType: 'blob' });
+  }
+
   getOfficers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/officer/petitions/officers`);
   }
