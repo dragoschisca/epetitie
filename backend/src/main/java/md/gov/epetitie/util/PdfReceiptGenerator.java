@@ -77,6 +77,7 @@ public class PdfReceiptGenerator {
             metaTable.setWidths(new float[]{35, 65});
 
             addTableRow(metaTable, "Număr de înregistrare (tracking):", petition.getTrackingNumber(), labelFont, valueFont);
+            addTableRow(metaTable, "Destinatar (Autoritate vizată):", petition.getTargetAuthority() != null && !petition.getTargetAuthority().isBlank() ? petition.getTargetAuthority() : "Autoritate Administrație Publică", labelFont, valueFont);
             addTableRow(metaTable, "Data depunerii:", petition.getSubmissionDate() != null ? petition.getSubmissionDate().format(DATE_FORMATTER) : "N/A", labelFont, valueFont);
             addTableRow(metaTable, "Termen limită legal (30 zile):", petition.getDeadlineDate() != null ? petition.getDeadlineDate().format(DATE_FORMATTER) : "N/A", labelFont, valueFont);
             addTableRow(metaTable, "Solicitant / autor:", petition.getAuthor().getFullName() + " (IDNP: " + (petition.getAuthor().getIdnp() != null ? petition.getAuthor().getIdnp() : "N/A") + ")", labelFont, valueFont);

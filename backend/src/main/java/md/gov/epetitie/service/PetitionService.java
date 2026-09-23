@@ -84,6 +84,7 @@ public class PetitionService {
                 .currentSignatureCount(1) // Author automatically signs
                 .category(dto.category() != null ? dto.category() : triage.recommendedCategory())
                 .title(dto.title())
+                .targetAuthority(dto.targetAuthority())
                 .description(dto.description())
                 .status(initialStatus)
                 .priority(triage.suggestedPriority() != null ? triage.suggestedPriority() : priority)
@@ -115,14 +116,7 @@ public class PetitionService {
                 .build();
         historyRepository.save(history);
 
-        PetitionResponseDto response = petitionMapper.toResponseDto(savedPetition);
-        return new PetitionResponseDto(
-                response.id(), response.trackingNumber(), response.title(), response.description(),
-                response.category(), response.status(), response.priority(), response.isPublicInitiative(),
-                response.signatureThreshold(), response.currentSignatureCount(), response.submissionDate(),
-                response.deadlineDate(), response.authorId(), response.authorName(), response.assignedOfficerId(),
-                response.assignedOfficerName(), response.aiTriageSummary(), true, response.daysRemaining()
-        );
+        return petitionMapper.toResponseDto(savedPetition).withHasSigned(true);
     }
 
     @Transactional
@@ -141,6 +135,9 @@ public class PetitionService {
         petition.setTitle(dto.title());
         petition.setDescription(dto.description());
         petition.setCategory(dto.category());
+        if (dto.targetAuthority() != null) {
+            petition.setTargetAuthority(dto.targetAuthority());
+        }
 
         Petition saved = petitionRepository.save(petition);
 
@@ -153,14 +150,7 @@ public class PetitionService {
                 .build();
         historyRepository.save(history);
 
-        PetitionResponseDto response = petitionMapper.toResponseDto(saved);
-        return new PetitionResponseDto(
-                response.id(), response.trackingNumber(), response.title(), response.description(),
-                response.category(), response.status(), response.priority(), response.isPublicInitiative(),
-                response.signatureThreshold(), response.currentSignatureCount(), response.submissionDate(),
-                response.deadlineDate(), response.authorId(), response.authorName(), response.assignedOfficerId(),
-                response.assignedOfficerName(), response.aiTriageSummary(), true, response.daysRemaining()
-        );
+        return petitionMapper.toResponseDto(saved).withHasSigned(true);
     }
 
     @Transactional
@@ -233,13 +223,7 @@ public class PetitionService {
 
         Petition updatedPetition = petitionRepository.save(petition);
         PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
-        PetitionResponseDto enrichedDto = new PetitionResponseDto(
-                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
-                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
-                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
-                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
-                pDto.assignedOfficerName(), pDto.aiTriageSummary(), true, pDto.daysRemaining()
-        );
+        PetitionResponseDto enrichedDto = pDto.withHasSigned(true);
 
         return new SignInitiativeDto(petition.getId(), sigHash, updatedPetition.getCurrentSignatureCount(), enrichedDto);
     }
@@ -261,13 +245,7 @@ public class PetitionService {
 
         Petition updatedPetition = petitionRepository.save(petition);
         PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
-        PetitionResponseDto enrichedDto = new PetitionResponseDto(
-                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
-                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
-                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
-                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
-                pDto.assignedOfficerName(), pDto.aiTriageSummary(), false, pDto.daysRemaining()
-        );
+        PetitionResponseDto enrichedDto = pDto.withHasSigned(false);
 
         return new SignInitiativeDto(petition.getId(), "", updatedPetition.getCurrentSignatureCount(), enrichedDto);
     }
@@ -335,13 +313,7 @@ public class PetitionService {
 
         Petition updatedPetition = petitionRepository.save(petition);
         PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
-        PetitionResponseDto enrichedDto = new PetitionResponseDto(
-                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
-                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
-                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
-                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
-                pDto.assignedOfficerName(), pDto.aiTriageSummary(), true, pDto.daysRemaining()
-        );
+        PetitionResponseDto enrichedDto = pDto.withHasSigned(true);
 
         return new SignInitiativeDto(petition.getId(), sigHash, updatedPetition.getCurrentSignatureCount(), enrichedDto);
     }
@@ -369,13 +341,7 @@ public class PetitionService {
 
         Petition updatedPetition = petitionRepository.save(petition);
         PetitionResponseDto pDto = petitionMapper.toResponseDto(updatedPetition);
-        PetitionResponseDto enrichedDto = new PetitionResponseDto(
-                pDto.id(), pDto.trackingNumber(), pDto.title(), pDto.description(),
-                pDto.category(), pDto.status(), pDto.priority(), pDto.isPublicInitiative(),
-                pDto.signatureThreshold(), pDto.currentSignatureCount(), pDto.submissionDate(),
-                pDto.deadlineDate(), pDto.authorId(), pDto.authorName(), pDto.assignedOfficerId(),
-                pDto.assignedOfficerName(), pDto.aiTriageSummary(), false, pDto.daysRemaining()
-        );
+        PetitionResponseDto enrichedDto = pDto.withHasSigned(false);
 
         return new SignInitiativeDto(petition.getId(), "", updatedPetition.getCurrentSignatureCount(), enrichedDto);
     }
@@ -409,13 +375,7 @@ public class PetitionService {
         return page.map(p -> {
             PetitionResponseDto dto = petitionMapper.toResponseDto(p);
             boolean signed = currentUser != null && signatureRepository.existsByPetitionIdAndCitizenId(p.getId(), currentUser.getId());
-            return new PetitionResponseDto(
-                    dto.id(), dto.trackingNumber(), dto.title(), dto.description(),
-                    dto.category(), dto.status(), dto.priority(), dto.isPublicInitiative(),
-                    dto.signatureThreshold(), dto.currentSignatureCount(), dto.submissionDate(),
-                    dto.deadlineDate(), dto.authorId(), dto.authorName(), dto.assignedOfficerId(),
-                    dto.assignedOfficerName(), dto.aiTriageSummary(), signed, dto.daysRemaining()
-            );
+            return dto.withHasSigned(signed);
         });
     }
 
@@ -439,13 +399,7 @@ public class PetitionService {
         Specification<Petition> spec = (root, query, cb) -> root.get("id").in(petitionIds);
         return petitionRepository.findAll(spec, pageable).map(p -> {
             PetitionResponseDto dto = petitionMapper.toResponseDto(p);
-            return new PetitionResponseDto(
-                    dto.id(), dto.trackingNumber(), dto.title(), dto.description(),
-                    dto.category(), dto.status(), dto.priority(), dto.isPublicInitiative(),
-                    dto.signatureThreshold(), dto.currentSignatureCount(), dto.submissionDate(),
-                    dto.deadlineDate(), dto.authorId(), dto.authorName(), dto.assignedOfficerId(),
-                    dto.assignedOfficerName(), dto.aiTriageSummary(), true, dto.daysRemaining()
-            );
+            return dto.withHasSigned(true);
         });
     }
 
@@ -495,7 +449,8 @@ public class PetitionService {
                 detail.signatureThreshold(), detail.currentSignatureCount(), detail.submissionDate(),
                 detail.deadlineDate(), detail.authorId(), detail.authorName(), detail.authorIdnp(),
                 detail.assignedOfficerId(), detail.assignedOfficerName(), resText,
-                detail.aiTriageSummary(), signed, detail.daysRemaining(), petitionMapper.toHistoryDtoList(history), detail.createdAt()
+                detail.aiTriageSummary(), signed, detail.daysRemaining(), petitionMapper.toHistoryDtoList(history), detail.createdAt(),
+                detail.targetAuthority()
         );
     }
 

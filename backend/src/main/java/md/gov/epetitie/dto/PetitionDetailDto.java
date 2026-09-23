@@ -30,5 +30,17 @@ public record PetitionDetailDto(
         Boolean hasSigned,
         Long daysRemaining,
         List<PetitionHistoryDto> history,
-        LocalDateTime createdAt
-) {}
+        LocalDateTime createdAt,
+        String targetAuthority
+) {
+    public PetitionDetailDto withHasSigned(Boolean newHasSigned) {
+        return new PetitionDetailDto(
+                id, trackingNumber, title, description, category, status, priority,
+                isPublicInitiative, signatureThreshold, currentSignatureCount,
+                submissionDate, deadlineDate, authorId, authorName, authorIdnp,
+                assignedOfficerId, assignedOfficerName, resolutionText,
+                aiTriageSummary, newHasSigned, daysRemaining, history,
+                createdAt, targetAuthority
+        );
+    }
+}

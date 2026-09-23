@@ -12,5 +12,6 @@
     <include file="db/changelog/changes/005_seed_initial_data.xml"/>
     <include file="db/changelog/changes/006_seed_detailed_petitions.xml"/>
     <include file="db/changelog/changes/007_seed_more_petitions.xml"/>
+    <include file="db/changelog/changes/008_add_target_authority_to_petitions.xml"/>
 
 </databaseChangeLog>

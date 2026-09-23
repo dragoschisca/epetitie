@@ -15,6 +15,9 @@ public record PetitionUpdateDto(
         String description,
         
         @NotNull(message = "Categoria este obligatorie")
-        PetitionCategory category
+        PetitionCategory category,
+
+        @Size(max = 255, message = "Autoritatea destinatară poate avea maximum 255 de caractere")
+        String targetAuthority
 ) {}
 

@@ -22,5 +22,8 @@ public record PetitionCreateDto(
 
         Integer signatureThreshold,
 
-        PetitionPriority priority
+        PetitionPriority priority,
+
+        @Size(max = 255, message = "Autoritatea destinatară poate avea maximum 255 de caractere")
+        String targetAuthority
 ) {}

@@ -25,5 +25,16 @@ public record PetitionResponseDto(
         String assignedOfficerName,
         String aiTriageSummary,
         Boolean hasSigned,
-        Long daysRemaining
-) {}
+        Long daysRemaining,
+        String targetAuthority
+) {
+    public PetitionResponseDto withHasSigned(Boolean newHasSigned) {
+        return new PetitionResponseDto(
+                id, trackingNumber, title, description, category, status, priority,
+                isPublicInitiative, signatureThreshold, currentSignatureCount,
+                submissionDate, deadlineDate, authorId, authorName,
+                assignedOfficerId, assignedOfficerName, aiTriageSummary,
+                newHasSigned, daysRemaining, targetAuthority
+        );
+    }
+}

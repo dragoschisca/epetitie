@@ -39,6 +39,9 @@ public class Petition {
     @Column(nullable = false, length = 255)
     private String title;
 
+    @Column(name = "target_authority", length = 255)
+    private String targetAuthority;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
@@ -88,7 +91,7 @@ public class Petition {
 
     public Petition(Long id, String trackingNumber, User author, Boolean isPublicInitiative,
                     Integer signatureThreshold, Integer currentSignatureCount, PetitionCategory category,
-                    String title, String description, PetitionStatus status, PetitionPriority priority,
+                    String title, String targetAuthority, String description, PetitionStatus status, PetitionPriority priority,
                     LocalDateTime submissionDate, LocalDateTime deadlineDate, User assignedOfficer,
                     String resolutionText, String aiTriageSummary, Long version,
                     List<PetitionAttachment> attachments, List<PetitionHistory> history,
@@ -101,6 +104,7 @@ public class Petition {
         this.currentSignatureCount = currentSignatureCount != null ? currentSignatureCount : 1;
         this.category = category;
         this.title = title;
+        this.targetAuthority = targetAuthority;
         this.description = description;
         this.status = status;
         this.priority = priority;
@@ -144,6 +148,9 @@ public class Petition {
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
+
+    public String getTargetAuthority() { return targetAuthority; }
+    public void setTargetAuthority(String targetAuthority) { this.targetAuthority = targetAuthority; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
@@ -193,6 +200,7 @@ public class Petition {
         private Integer currentSignatureCount = 1;
         private PetitionCategory category;
         private String title;
+        private String targetAuthority;
         private String description;
         private PetitionStatus status;
         private PetitionPriority priority;
@@ -215,6 +223,7 @@ public class Petition {
         public PetitionBuilder currentSignatureCount(Integer currentSignatureCount) { this.currentSignatureCount = currentSignatureCount; return this; }
         public PetitionBuilder category(PetitionCategory category) { this.category = category; return this; }
         public PetitionBuilder title(String title) { this.title = title; return this; }
+        public PetitionBuilder targetAuthority(String targetAuthority) { this.targetAuthority = targetAuthority; return this; }
         public PetitionBuilder description(String description) { this.description = description; return this; }
         public PetitionBuilder status(PetitionStatus status) { this.status = status; return this; }
         public PetitionBuilder priority(PetitionPriority priority) { this.priority = priority; return this; }
@@ -231,7 +240,7 @@ public class Petition {
 
         public Petition build() {
             return new Petition(id, trackingNumber, author, isPublicInitiative, signatureThreshold, currentSignatureCount,
-                    category, title, description, status, priority, submissionDate, deadlineDate, assignedOfficer,
+                    category, title, targetAuthority, description, status, priority, submissionDate, deadlineDate, assignedOfficer,
                     resolutionText, aiTriageSummary, version, attachments, history, createdAt, updatedAt);
         }
     }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="008-1" author="dragos">
+        <addColumn tableName="petitions">
+            <column name="target_authority" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="008-2" author="dragos">
+        <!-- Update specific seeded petitions with realistic target authorities -->
+        <sql>
+            UPDATE petitions SET target_authority = 'Primăria Municipiului Chișinău' WHERE tracking_number = 'PET-2026-10001';
+            UPDATE petitions SET target_authority = 'Ministerul Mediului' WHERE tracking_number = 'PET-2026-10002';
+            UPDATE petitions SET target_authority = 'Ministerul Sănătății' WHERE tracking_number = 'PET-2026-10003';
+            UPDATE petitions SET target_authority = 'Agenția Servicii Publice (ASP)' WHERE tracking_number = 'PET-2026-10004';
+            UPDATE petitions SET target_authority = 'Ministerul Muncii și Protecției Sociale' WHERE tracking_number = 'PET-2026-10005';
+            UPDATE petitions SET target_authority = 'Ministerul Educației și Cercetării' WHERE tracking_number = 'PET-2026-10006';
+            UPDATE petitions SET target_authority = 'Ministerul Infrastructurii și Dezvoltării Regionale' WHERE tracking_number = 'PET-2026-10007';
+            UPDATE petitions SET target_authority = 'Inspectoratul pentru Protecția Mediului' WHERE tracking_number = 'PET-2026-10008';
+
+            <!-- Fallback updates for any other petition by category -->
+            UPDATE petitions SET target_authority = 'Ministerul Infrastructurii și Dezvoltării Regionale' WHERE target_authority IS NULL AND category = 'INFRASTRUCTURA';
+            UPDATE petitions SET target_authority = 'Ministerul Mediului' WHERE target_authority IS NULL AND category = 'MEDIU';
+            UPDATE petitions SET target_authority = 'Ministerul Sănătății' WHERE target_authority IS NULL AND category = 'SANATATE';
+            UPDATE petitions SET target_authority = 'Ministerul Educației și Cercetării' WHERE target_authority IS NULL AND category = 'EDUCATIE';
+            UPDATE petitions SET target_authority = 'Agenția Servicii Publice (ASP)' WHERE target_authority IS NULL AND category = 'ADMINISTRATIE_PUBLICA';
+            UPDATE petitions SET target_authority = 'Ministerul Muncii și Protecției Sociale' WHERE target_authority IS NULL AND category = 'SOCIAL';
+            UPDATE petitions SET target_authority = 'Guvernul Republicii Moldova' WHERE target_authority IS NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
