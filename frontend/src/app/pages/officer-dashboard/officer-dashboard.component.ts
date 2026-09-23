@@ -273,15 +273,47 @@ import { User } from '../../models/user.model';
               </div>
             </div>
 
-            <!-- Distinct High-Contrast Petition Description Card -->
-            <div class="space-y-1.5">
-              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-evo-cobalt" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                <span>Conținutul și descrierea solicitării:</span>
-              </h4>
-              <div class="text-sm text-slate-900 bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-sm leading-relaxed whitespace-pre-line font-medium">
-                {{ selectedDetail.description }}
-              </div>
+            <!-- Collapsible Dropdown for Petition Content & Description -->
+            <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                (click)="isDescriptionExpanded = !isDescriptionExpanded"
+                class="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                aria-label="Comută afișarea conținutului petiției"
+              >
+                <div class="flex items-center gap-2.5 min-w-0 pr-3">
+                  <div class="w-7 h-7 rounded-lg bg-evo-cobalt-light text-evo-cobalt flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  </div>
+                  <div class="min-w-0">
+                    <span class="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                      Conținutul și descrierea solicitării
+                    </span>
+                    @if (!isDescriptionExpanded) {
+                      <span class="text-xs text-slate-500 font-normal truncate block max-w-xl mt-0.5">
+                        {{ selectedDetail.description }}
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="text-xs font-bold text-evo-cobalt bg-evo-cobalt-light px-2.5 py-1 rounded-lg">
+                    {{ isDescriptionExpanded ? 'Restrânge textul' : 'Afișează textul complet' }}
+                  </span>
+                  <div class="w-6 h-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 transition-transform duration-200" [class.rotate-180]="isDescriptionExpanded">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                </div>
+              </button>
+
+              @if (isDescriptionExpanded) {
+                <div class="p-5 border-t border-slate-200 bg-white text-sm text-slate-900 leading-relaxed whitespace-pre-line font-medium">
+                  {{ selectedDetail.description }}
+                </div>
+              }
             </div>
 
             <!-- Distinct Dark Navy / Cyan Gemini AI Triage Section -->
@@ -300,21 +332,72 @@ import { User } from '../../models/user.model';
 
             <!-- Gemini AI Resolution Generator Button & Draft Box -->
             <div class="border-t border-evo-border pt-4 space-y-3">
-              <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                <h4 class="text-xs font-bold text-evo-navy uppercase tracking-wider">Asistent decizie administrativă</h4>
-                <button
-                  (click)="generateAiResolutionDraft()"
-                  [disabled]="isAiGenerating"
-                  class="btn-primary text-xs py-2 px-3.5 bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center gap-1.5"
-                >
-                  @if (isAiGenerating) {
-                    <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    <span>Generare proiect rezoluție...</span>
-                  } @else {
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                    <span>Generare decizie cu AI (Gemini)</span>
-                  }
-                </button>
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-evo-navy uppercase tracking-wider flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  <span>Asistent decizie administrativă (Gemini AI)</span>
+                </h4>
+              </div>
+
+              <!-- Dedicated Field for Inspector's Assessment / Opinion -->
+              <div class="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-evo-border">
+                <div class="flex flex-wrap items-center justify-between gap-1">
+                  <label for="officerOpinion" class="text-xs font-bold text-evo-navy uppercase tracking-wider flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    <span>Părerea inspectorului de caz (opinie & măsură propusă):</span>
+                  </label>
+                  <span class="text-[11px] text-evo-text-muted">Se transmite către Gemini AI pentru redactarea deciziei</span>
+                </div>
+
+                <textarea
+                  id="officerOpinion"
+                  [(ngModel)]="officerOpinion"
+                  rows="3"
+                  placeholder="Descrieți părerea dumneavoastră despre situație: dacă solicitarea trebuie aprobată sau respinsă, constatările efectuate sau măsurile dispuse spre remediere..."
+                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-medium text-evo-navy focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-xs"
+                ></textarea>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                  <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+                    <span class="text-slate-500 font-semibold">Opțiuni rapide:</span>
+                    <button
+                      type="button"
+                      (click)="setQuickOpinion('Se propune aprobarea demersului și obligarea serviciilor municipale la remedierea problemelor semnalate.')"
+                      class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-bold transition-colors cursor-pointer"
+                    >
+                      + Aprobare
+                    </button>
+                    <button
+                      type="button"
+                      (click)="setQuickOpinion('Se propune respingerea motivată a petiției, aspectele reclamate nefiind confirmate sau nefiind de competența instituției.')"
+                      class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold transition-colors cursor-pointer"
+                    >
+                      + Respingere
+                    </button>
+                    <button
+                      type="button"
+                      (click)="setQuickOpinion('Se propune admiterea parțială, cu inițierea unei expertize la fața locului și informarea petiționarului în 15 zile.')"
+                      class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 font-bold transition-colors cursor-pointer"
+                    >
+                      + Măsuri parțiale
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    (click)="generateAiResolutionDraft()"
+                    [disabled]="isAiGenerating"
+                    class="btn-primary text-xs py-2 px-4 bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    @if (isAiGenerating) {
+                      <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Gemini AI redactează decizia...</span>
+                    } @else {
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                      <span>Generează decizia cu Gemini AI</span>
+                    }
+                  </button>
+                </div>
               </div>
 
               @if (aiResolutionDraft) {
@@ -402,6 +485,8 @@ export class OfficerDashboardComponent implements OnInit {
   officerFilter: number | '' = '';
 
   selectedDetail: PetitionDetail | null = null;
+  isDescriptionExpanded = false;
+  officerOpinion = '';
   aiResolutionDraft: AiResolutionDraft | null = null;
   isAiGenerating = false;
 
@@ -450,6 +535,8 @@ export class OfficerDashboardComponent implements OnInit {
     this.petitionService.getPetitionDetailsOfficer(id).subscribe({
       next: (detail) => {
         this.selectedDetail = detail;
+        this.isDescriptionExpanded = false;
+        this.officerOpinion = '';
         this.newStatus = detail.status;
         this.selectedOfficerId = detail.assignedOfficerId || null;
         this.resolutionText = detail.resolutionText || '';
@@ -461,14 +548,20 @@ export class OfficerDashboardComponent implements OnInit {
 
   closeDetail() {
     this.selectedDetail = null;
+    this.isDescriptionExpanded = false;
+    this.officerOpinion = '';
     this.aiResolutionDraft = null;
+  }
+
+  setQuickOpinion(opinion: string) {
+    this.officerOpinion = opinion;
   }
 
   generateAiResolutionDraft() {
     if (!this.selectedDetail) return;
     this.isAiGenerating = true;
 
-    this.petitionService.generateAiDraftResolution(this.selectedDetail.id).subscribe({
+    this.petitionService.generateAiDraftResolution(this.selectedDetail.id, this.officerOpinion).subscribe({
       next: (draft) => {
         this.aiResolutionDraft = draft;
         this.isAiGenerating = false;

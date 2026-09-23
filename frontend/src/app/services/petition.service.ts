@@ -155,8 +155,8 @@ export class PetitionService {
     return this.http.patch<PetitionDetail>(`${this.baseUrl}/officer/petitions/${id}/status`, request);
   }
 
-  generateAiDraftResolution(id: number): Observable<AiResolutionDraft> {
-    return this.http.post<AiResolutionDraft>(`${this.baseUrl}/officer/petitions/${id}/ai-draft-resolution`, {});
+  generateAiDraftResolution(id: number, officerOpinion?: string): Observable<AiResolutionDraft> {
+    return this.http.post<AiResolutionDraft>(`${this.baseUrl}/officer/petitions/${id}/ai-draft-resolution`, { officerOpinion });
   }
 
   downloadPetitionReceiptPdf(id: number): Observable<Blob> {

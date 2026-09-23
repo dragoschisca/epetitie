@@ -163,7 +163,7 @@ import { PetitionDetail, getStatusLabel, getCategoryLabel } from '../../models/p
                     🏛️
                   </div>
                   <div>
-                    <h3 class="text-sm font-extrabold text-white">Răspuns și Rezoluție Administrativă Oficială</h3>
+                    <h3 class="text-sm font-extrabold text-white">Răspuns și rezoluție administrativă oficială</h3>
                     <p class="text-[11px] text-emerald-300/80 font-normal">Decizie legală conform Codului Administrativ al Republicii Moldova</p>
                   </div>
                 </div>

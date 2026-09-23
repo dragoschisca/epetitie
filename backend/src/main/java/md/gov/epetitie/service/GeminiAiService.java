@@ -16,6 +16,8 @@ import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class GeminiAiService {
@@ -86,40 +88,67 @@ public class GeminiAiService {
     }
 
     public AiResolutionDraftDto generateDraftResolution(Petition petition) {
+        return generateDraftResolution(petition, null);
+    }
+
+    public AiResolutionDraftDto generateDraftResolution(Petition petition, String officerOpinion) {
         if (isApiKeyMissing()) {
             log.info("Gemini API key missing or default. Returning fallback resolution draft.");
-            return fallbackResolutionDraft(petition);
+            return fallbackResolutionDraft(petition, officerOpinion);
         }
 
         try {
-            String prompt = """
-                Ești un inspector și jurist al Guvernului Republicii Moldova.
-                Elaborează un proiect de rezoluție/decizie administrativă oficială în limba română pentru următoarea petiție:
+            StringBuilder promptBuilder = new StringBuilder();
+            promptBuilder.append("""
+                Ești un inspector și jurist de elită al Guvernului Republicii Moldova și al administrației publice.
+                Elaborează un proiect oficial complet de decizie administrativă / rezoluție în limba română pentru următoarea petiție:
                 
                 NUMĂR ÎNREGISTRARE: %s
                 SOLICITANT: %s (IDNP: %s)
+                DESTINATAR: %s
                 CATEGORIE: %s
                 TITLU: %s
-                DESCRIERE: %s
-                
-                Generați un răspuns oficial conform Codului Administrativ al Republicii Moldova, structurat clar:
-                1. Preambul și temei legal (Legea nr. 190/1997 sau Codul Administrativ nr. 116/2018).
-                2. Constatări de fapt.
-                3. Decizia/Măsurile dispuse.
-                
-                REGULI STRICTE DE REDACTARE:
-                - Scrie în stil uman natural (cu majusculă doar la începutul propozițiilor/frazelor, NU capitaliza fiecare cuvânt dintr-un titlu).
-                - Textul trebuie să fie text simplu (plain text) curat, FĂRĂ simboluri Markdown (NU folosi caractere precum #, *, **, ---, ` sau alte marcaje speciale).
+                DESCRIERE SOLICITARE: %s
                 """.formatted(
                     petition.getTrackingNumber(),
                     petition.getAuthor().getFullName(),
                     petition.getAuthor().getIdnp() != null ? petition.getAuthor().getIdnp() : "N/A",
+                    petition.getTargetAuthority() != null ? petition.getTargetAuthority() : "Autoritate administrație publică",
                     petition.getCategory().getDisplayName(),
                     petition.getTitle(),
                     petition.getDescription()
-            );
+            ));
 
-            String draftText = sanitizeAiText(callGeminiApi(prompt));
+            if (officerOpinion != null && !officerOpinion.trim().isBlank()) {
+                promptBuilder.append("""
+                    
+                    PĂREREA, CONSTATĂRILE ȘI POZIȚIA INSPECTORULUI DE CAZ:
+                    "%s"
+                    
+                    DIRECTIVĂ MANDATORIE PRIVIND SOLUȚIONAREA:
+                    Emite decizia administrativă finală pe baza opiniei inspectorului formulate mai sus. Dacă inspectorul susține aprobarea/admiterea petiției, redactează o decizie de admitere cu dispoziții concrete de remediere și termene. Dacă inspectorul susține respingerea sau măsuri parțiale/redirecționare, motivează juridic decizia în conformitate cu poziția și constatările inspectorului.
+                    """.formatted(officerOpinion.trim()));
+            } else {
+                promptBuilder.append("""
+                    
+                    Analizează temeinicia solicitării și formulează o decizie administrativă motivată și echilibrată (admitere sau respingere motivată conform legii).
+                    """);
+            }
+
+            promptBuilder.append("""
+                
+                STRUCTURA OBLIGATORIE A RĂSPUNSULUI:
+                Antet oficial (Republica Moldova, denumirea autorității destinatară, număr și dată).
+                1. Preambul și temei legal (Codul Administrativ al Republicii Moldova nr. 116/2018 sau Legea cu privire la petiționare).
+                2. Constatări de fapt și analiza situației (raportată la petiție și la opinia inspectorului).
+                3. Dispozitivul deciziei / Măsurile concrete dispuse și căile legale de atac.
+                
+                REGULI STRICTE DE REDACTARE ȘI ORTOGRAFIE:
+                - FIECARE PARAGRAF, FIECARE ALINEAT ȘI FIECARE PROPOZIȚIE TREBUIE OBLIGATORIU SĂ ÎNCEAPĂ CU LITERĂ MAJUSCULĂ (ex: "Examinând...", "Demersul...", "În urma...", "Deși...", "Având în vedere...", "Se dispune..."). ESTE STRICT INTERZISĂ începerea vreunui paragraf sau a vreunei propoziții cu literă mică!
+                - Textul trebuie să fie text simplu (plain text) curat, FĂRĂ simboluri Markdown (NU folosi caractere precum #, *, **, ---, ` sau alte marcaje speciale).
+                """);
+
+            String draftText = sanitizeAiText(callGeminiApi(promptBuilder.toString()));
 
             return new AiResolutionDraftDto(
                     petition.getId(),
@@ -130,7 +159,7 @@ public class GeminiAiService {
 
         } catch (Exception e) {
             log.error("Eroare la generarea draft-ului de rezoluție cu Gemini AI: {}", e.getMessage());
-            return fallbackResolutionDraft(petition);
+            return fallbackResolutionDraft(petition, officerOpinion);
         }
     }
 
@@ -189,7 +218,32 @@ public class GeminiAiService {
         cleaned = cleaned.replaceAll("(?m)^\\s*[*\\-+]\s+", "• ");
         // Normalize multiple blank lines into max 2 newlines
         cleaned = cleaned.replaceAll("\n{3,}", "\n\n");
-        return cleaned.trim();
+        cleaned = cleaned.trim();
+        return capitalizeSentencesAndParagraphs(cleaned);
+    }
+
+    public String capitalizeSentencesAndParagraphs(String text) {
+        if (text == null || text.isBlank()) return text;
+
+        // 1. Capitalize first letter of every line/paragraph (including after bullets or numbering like "1. ", "• ")
+        Pattern lineStartPattern = Pattern.compile("(?m)(^[ \\t]*(?:[•\\-*]|\\d+[\\.\\)])?[ \\t]*)([\\p{Ll}])");
+        Matcher m1 = lineStartPattern.matcher(text);
+        StringBuilder sb1 = new StringBuilder();
+        while (m1.find()) {
+            m1.appendReplacement(sb1, Matcher.quoteReplacement(m1.group(1) + m1.group(2).toUpperCase()));
+        }
+        m1.appendTail(sb1);
+
+        // 2. Capitalize letter after sentence terminator (. ? !) followed by whitespace
+        Pattern sentencePattern = Pattern.compile("([\\.\\?!][ \\t]+)([\\p{Ll}])");
+        Matcher m2 = sentencePattern.matcher(sb1.toString());
+        StringBuilder sb2 = new StringBuilder();
+        while (m2.find()) {
+            m2.appendReplacement(sb2, Matcher.quoteReplacement(m2.group(1) + m2.group(2).toUpperCase()));
+        }
+        m2.appendTail(sb2);
+
+        return sb2.toString();
     }
 
     private PetitionCategory parseCategory(String text) {
@@ -216,30 +270,59 @@ public class GeminiAiService {
     }
 
     private AiResolutionDraftDto fallbackResolutionDraft(Petition petition) {
+        return fallbackResolutionDraft(petition, null);
+    }
+
+    private AiResolutionDraftDto fallbackResolutionDraft(Petition petition, String officerOpinion) {
+        String authority = petition.getTargetAuthority() != null ? petition.getTargetAuthority() : "Guvernul Republicii Moldova";
+        String dateStr = petition.getCreatedAt() != null ? petition.getCreatedAt().toLocalDate().toString() : java.time.LocalDate.now().toString();
+
+        String officerNote = (officerOpinion != null && !officerOpinion.trim().isBlank())
+                ? "\nAvând în vedere constatările și opinia inspectorului de caz: \"%s\",\n".formatted(officerOpinion.trim())
+                : "";
+
+        boolean isRejection = officerOpinion != null && (
+                officerOpinion.toLowerCase().contains("resping") ||
+                officerOpinion.toLowerCase().contains("nefondat") ||
+                officerOpinion.toLowerCase().contains("inadmisibil")
+        );
+
+        String dispozitiv = isRejection ? """
+            1. Se respinge motivat petiția formulată, conform argumentelor și temeiurilor constatate în nota de examinare.
+            2. Se aduce la cunoștința petiționarului dreptul de a contesta prezenta decizie în termen de 30 de zile la instanța de contencios administrativ.
+            3. Dosarul se clasează în Registrul Național de Petiții cu statut respins.
+            """ : """
+            1. Se admite demersul formulat de petiționar privind "%s".
+            2. Se dispune efectuarea măsurilor concrete de remediere și verificare în termen de 15 zile lucrătoare.
+            3. Răspunsul oficial final și procesul-verbal vor fi transmise solicitantului la adresa indicată.
+            """.formatted(petition.getTitle());
+
         String draft = """
             Republica Moldova
-            Departamentul de resort
+            %s
             
             Proiect de decizie administrativă
             Referitor la petiția nr. %s din %s
             
             Urmare a examinării petiției depuse de cetățeanul %s privind "%s", în temeiul Codului Administrativ al Republicii Moldova nr. 116/2018:
-            
-            1. Se ia act de solicitarea formulată de petiționar.
-            2. Se dispune efectuarea verificărilor de teren și întocmirea notei informative în termen de 15 zile lucrătoare.
-            3. Răspunsul oficial final va fi transmis solicitantului la adresa de corespondență înregistrată.
+            %s
+            Dispozitiv:
+            %s
             """.formatted(
+                authority,
                 petition.getTrackingNumber(),
-                petition.getCreatedAt().toLocalDate().toString(),
+                dateStr,
                 petition.getAuthor().getFullName(),
-                petition.getTitle()
+                petition.getTitle(),
+                officerNote,
+                dispozitiv
         );
 
         return new AiResolutionDraftDto(
                 petition.getId(),
                 petition.getTrackingNumber(),
-                draft,
-                "Codul Administrativ al Republicii Moldova nr. 116/2018"
+                capitalizeSentencesAndParagraphs(draft.trim()),
+                "Codul Administrativ al Republicii Moldova nr. 116/2018, art. 75-82"
         );
     }
 }

@@ -77,6 +77,7 @@ public class OfficerPetitionController {
     @PostMapping("/{id}/ai-draft-resolution")
     public ResponseEntity<AiResolutionDraftDto> generateAiDraftResolution(
             @PathVariable Long id,
+            @RequestBody(required = false) md.gov.epetitie.dto.AiDraftRequestDto requestDto,
             @AuthenticationPrincipal UserPrincipal currentUser
     ) {
         PetitionDetailDto detail = petitionService.getPetitionDetails(id, currentUser);
@@ -87,6 +88,7 @@ public class OfficerPetitionController {
                 .title(detail.title())
                 .description(detail.description())
                 .category(detail.category())
+                .targetAuthority(detail.targetAuthority())
                 .author(md.gov.epetitie.model.User.builder()
                         .firstName(detail.authorName())
                         .lastName("")
@@ -95,7 +97,8 @@ public class OfficerPetitionController {
                 .createdAt(detail.createdAt() != null ? detail.createdAt() : java.time.LocalDateTime.now())
                 .build();
 
-        AiResolutionDraftDto draft = geminiAiService.generateDraftResolution(petition);
+        String officerOpinion = (requestDto != null) ? requestDto.officerOpinion() : null;
+        AiResolutionDraftDto draft = geminiAiService.generateDraftResolution(petition, officerOpinion);
         return ResponseEntity.ok(draft);
     }
 
