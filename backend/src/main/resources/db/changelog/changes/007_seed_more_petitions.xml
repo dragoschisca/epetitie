@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="007-1" author="dragos">
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="104"/>
+            <column name="tracking_number" value="PET-2026-10004"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="true"/>
+            <column name="signature_threshold" valueNumeric="100"/>
+            <column name="current_signature_count" valueNumeric="12"/>
+            <column name="category" value="ADMINISTRATIE_PUBLICA"/>
+            <column name="title" value="Simplificarea procesului de eliberare a actelor de stare civilă"/>
+            <column name="description" value="Solicităm implementarea unui sistem complet digital pentru eliberarea certificatelor de naștere, căsătorie și deces, pentru a reduce timpul de așteptare la ghișee."/>
+            <column name="status" value="COLLECTING_SIGNATURES"/>
+            <column name="priority" value="MEDIUM"/>
+            <column name="created_at" valueDate="2026-09-10T09:00:00"/>
+            <column name="updated_at" valueDate="2026-09-10T09:00:00"/>
+        </insert>
+
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="105"/>
+            <column name="tracking_number" value="PET-2026-10005"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="false"/>
+            <column name="signature_threshold" valueNumeric="0"/>
+            <column name="current_signature_count" valueNumeric="1"/>
+            <column name="category" value="SOCIAL"/>
+            <column name="title" value="Majorarea indemnizației pentru familiile cu mulți copii"/>
+            <column name="description" value="Cerem revizuirea politicilor sociale și majorarea alocațiilor pentru familiile cu 3 sau mai mulți copii, pentru a susține natalitatea în țară."/>
+            <column name="status" value="SUBMITTED"/>
+            <column name="priority" value="HIGH"/>
+            <column name="submission_date" valueDate="2026-09-11T10:30:00"/>
+            <column name="deadline_date" valueDate="2026-10-11T10:30:00"/>
+            <column name="created_at" valueDate="2026-09-11T10:00:00"/>
+            <column name="updated_at" valueDate="2026-09-11T10:30:00"/>
+        </insert>
+
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="106"/>
+            <column name="tracking_number" value="PET-2026-10006"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="true"/>
+            <column name="signature_threshold" valueNumeric="500"/>
+            <column name="current_signature_count" valueNumeric="150"/>
+            <column name="category" value="EDUCATIE"/>
+            <column name="title" value="Dotarea școlilor rurale cu echipamente IT moderne"/>
+            <column name="description" value="Este necesară alocarea unui buget de urgență pentru dotarea școlilor din mediul rural cu calculatoare și conexiune la internet de mare viteză."/>
+            <column name="status" value="COLLECTING_SIGNATURES"/>
+            <column name="priority" value="URGENT"/>
+            <column name="created_at" valueDate="2026-09-12T11:00:00"/>
+            <column name="updated_at" valueDate="2026-09-12T11:00:00"/>
+        </insert>
+
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="107"/>
+            <column name="tracking_number" value="PET-2026-10007"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="true"/>
+            <column name="signature_threshold" valueNumeric="200"/>
+            <column name="current_signature_count" valueNumeric="205"/>
+            <column name="category" value="INFRASTRUCTURA"/>
+            <column name="title" value="Reparația drumului regional R15"/>
+            <column name="description" value="Drumul R15 este într-o stare deplorabilă, punând în pericol viața șoferilor și îngreunând accesul către satele din regiune. Solicităm reparația capitală imediată."/>
+            <column name="status" value="SUBMITTED"/>
+            <column name="priority" value="HIGH"/>
+            <column name="submission_date" valueDate="2026-09-15T08:00:00"/>
+            <column name="deadline_date" valueDate="2026-10-15T08:00:00"/>
+            <column name="assigned_officer_id" valueNumeric="2"/>
+            <column name="created_at" valueDate="2026-09-13T09:00:00"/>
+            <column name="updated_at" valueDate="2026-09-15T08:00:00"/>
+        </insert>
+
+        <insert tableName="petitions">
+            <column name="id" valueNumeric="108"/>
+            <column name="tracking_number" value="PET-2026-10008"/>
+            <column name="author_id" valueNumeric="4"/>
+            <column name="is_public_initiative" valueBoolean="false"/>
+            <column name="signature_threshold" valueNumeric="0"/>
+            <column name="current_signature_count" valueNumeric="1"/>
+            <column name="category" value="MEDIU"/>
+            <column name="title" value="Stoparea poluării râului Bîc"/>
+            <column name="description" value="Fabricile din zona industrială continuă să deverseze deșeuri netratate în râul Bîc. Solicităm controale urgente și aplicarea de amenzi drastice."/>
+            <column name="status" value="IN_REVIEW"/>
+            <column name="priority" value="MEDIUM"/>
+            <column name="submission_date" valueDate="2026-09-14T14:00:00"/>
+            <column name="deadline_date" valueDate="2026-10-14T14:00:00"/>
+            <column name="assigned_officer_id" valueNumeric="3"/>
+            <column name="created_at" valueDate="2026-09-14T14:00:00"/>
+            <column name="updated_at" valueDate="2026-09-16T10:00:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="104"/>
+            <column name="petition_id" valueNumeric="104"/>
+            <column name="to_status" value="COLLECTING_SIGNATURES"/>
+            <column name="note" value="Inițiativă publică creată și deschisă pentru colectare de semnături."/>
+            <column name="actor_id" valueNumeric="4"/>
+            <column name="created_at" valueDate="2026-09-10T09:00:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="105"/>
+            <column name="petition_id" valueNumeric="105"/>
+            <column name="to_status" value="SUBMITTED"/>
+            <column name="note" value="Petiție depusă spre analiză."/>
+            <column name="actor_id" valueNumeric="4"/>
+            <column name="created_at" valueDate="2026-09-11T10:30:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="106"/>
+            <column name="petition_id" valueNumeric="106"/>
+            <column name="to_status" value="COLLECTING_SIGNATURES"/>
+            <column name="note" value="Inițiativă publică creată și deschisă pentru colectare de semnături."/>
+            <column name="actor_id" valueNumeric="4"/>
+            <column name="created_at" valueDate="2026-09-12T11:00:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="107"/>
+            <column name="petition_id" valueNumeric="107"/>
+            <column name="from_status" value="COLLECTING_SIGNATURES"/>
+            <column name="to_status" value="SUBMITTED"/>
+            <column name="note" value="Pragul de semnături atins. Depusă spre analiză."/>
+            <column name="actor_id" valueNumeric="4"/>
+            <column name="created_at" valueDate="2026-09-15T08:00:00"/>
+        </insert>
+
+        <insert tableName="petition_history">
+            <column name="id" valueNumeric="108"/>
+            <column name="petition_id" valueNumeric="108"/>
+            <column name="from_status" value="SUBMITTED"/>
+            <column name="to_status" value="IN_REVIEW"/>
+            <column name="note" value="Dosar preluat în examinare."/>
+            <column name="actor_id" valueNumeric="3"/>
+            <column name="created_at" valueDate="2026-09-16T10:00:00"/>
+        </insert>
+
+        <sql dbms="postgresql">
+            SELECT setval('petitions_id_seq', (SELECT MAX(id) FROM petitions));
+            SELECT setval('petition_history_id_seq', (SELECT MAX(id) FROM petition_history));
+        </sql>
+    </changeSet>
+</databaseChangeLog>
