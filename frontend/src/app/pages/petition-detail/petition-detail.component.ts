@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PetitionService } from '../../services/petition.service';
 import { AuthService } from '../../services/auth.service';
-import { PetitionDetail } from '../../models/petition.model';
+import { PetitionDetail, getStatusLabel, getCategoryLabel } from '../../models/petition.model';
 
 @Component({
   selector: 'app-petition-detail',
@@ -59,11 +59,11 @@ import { PetitionDetail } from '../../models/petition.model';
                 <span class="font-mono font-extrabold text-xs text-evo-cobalt bg-evo-cobalt-light px-3 py-1 rounded-lg border border-evo-cobalt/20">
                   #{{ petition.trackingNumber }}
                 </span>
-                <span class="px-3 py-1 text-xs font-bold rounded-full border" [ngClass]="getStatusBadgeClass(petition.status)">
-                  {{ petition.status }}
+                <span class="px-3 py-1 text-xs font-bold rounded-full border whitespace-nowrap" [ngClass]="getStatusBadgeClass(petition.status)">
+                  {{ getStatusLabel(petition.status) }}
                 </span>
-                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
-                  {{ petition.category }}
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 whitespace-nowrap">
+                  {{ getCategoryLabel(petition.category) }}
                 </span>
               </div>
               
@@ -76,10 +76,14 @@ import { PetitionDetail } from '../../models/petition.model';
               {{ petition.title }}
             </h1>
 
-            <div class="flex flex-wrap items-center justify-between text-xs text-evo-text-muted gap-4 bg-slate-50 p-4 rounded-2xl border border-evo-border">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs text-evo-text-muted">
               <div>
                 <span class="font-medium text-slate-500 block">Autor / Inițiator:</span>
                 <span class="font-bold text-evo-navy text-sm">{{ petition.authorName }}</span>
+              </div>
+              <div>
+                <span class="font-medium text-slate-500 block">Destinatar (Autoritate):</span>
+                <span class="font-bold text-evo-cobalt text-sm">{{ petition.targetAuthority || 'Autoritate administrație publică' }}</span>
               </div>
               <div>
                 <span class="font-medium text-slate-500 block">Inspector desemnat:</span>
@@ -132,7 +136,7 @@ import { PetitionDetail } from '../../models/petition.model';
                         @if (isSigning) { Se procesează... } @else { ✕ Revocă semnătura }
                       </button>
                     } @else {
-                      <button (click)="toggleSignatureAuth()" [disabled]="isSigning" class="btn-primary text-xs py-2.5 px-5 bg-emerald-500 hover:bg-emerald-600 font-extrabold text-slate-900 border-none shadow-lg">
+                      <button (click)="promptSignAuth()" [disabled]="isSigning" class="btn-primary text-xs py-2.5 px-5 bg-emerald-500 hover:bg-emerald-600 font-extrabold text-slate-900 border-none shadow-lg">
                         @if (isSigning) { Se procesează... } @else { ✍️ Semnează inițiativa }
                       </button>
                     }
@@ -281,6 +285,67 @@ import { PetitionDetail } from '../../models/petition.model';
           </div>
         </div>
       }
+
+      <!-- Modal Confirmare Semnare Petiție (Utilizator Autentificat) -->
+      @if (showConfirmSignModal && petition) {
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 border border-evo-border" role="dialog" aria-modal="true">
+            <div class="text-center space-y-3">
+              <div class="w-14 h-14 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+              </div>
+              <div class="space-y-1">
+                <h3 class="text-lg font-black text-evo-navy">Confirmare semnare petiție</h3>
+                <p class="text-xs text-evo-text-muted">Serviciul guvernamental de petiționare EVO</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 border border-evo-border p-4 rounded-2xl space-y-2">
+              <p class="text-xs font-semibold text-slate-700">
+                Sunteți sigur că doriți să semnați această inițiativă publică?
+              </p>
+              <div class="font-bold text-evo-navy text-sm leading-snug line-clamp-2">
+                {{ petition.title }}
+              </div>
+              <div class="text-[11px] font-mono text-evo-cobalt">
+                #{{ petition.trackingNumber }}
+              </div>
+            </div>
+
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 flex items-start gap-2">
+              <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>Semnătura dvs. va fi înregistrată oficial în sistem și va contribui la atingerea pragului legal.</span>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                (click)="showConfirmSignModal = false"
+                class="btn-secondary w-1/2 py-2.5 text-xs font-bold"
+              >
+                Nu, renunță
+              </button>
+              <button
+                type="button"
+                (click)="confirmSignAuth()"
+                [disabled]="isSigning"
+                class="btn-primary w-1/2 py-2.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 border-none flex items-center justify-center gap-1.5"
+              >
+                @if (isSigning) {
+                  <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  <span>Se semnează...</span>
+                } @else {
+                  <span>Da, semnează</span>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `
 })
@@ -293,6 +358,7 @@ export class PetitionDetailComponent implements OnInit {
   isLoading = true;
   isSigning = false;
   showShareToast = false;
+  showConfirmSignModal = false;
 
   // Guest OTP Modal state
   showOtpModal = false;
@@ -341,11 +407,35 @@ export class PetitionDetailComponent implements OnInit {
     return Math.min(100, pct);
   }
 
-  toggleSignatureAuth() {
+  promptSignAuth() {
+    this.showConfirmSignModal = true;
+  }
+
+  confirmSignAuth() {
     if (!this.petition) return;
     this.isSigning = true;
+    this.petitionService.signInitiative(this.petition.id).subscribe({
+      next: (res) => {
+        this.isSigning = false;
+        this.showConfirmSignModal = false;
+        if (this.petition) {
+          this.petition.hasSigned = true;
+          this.petition.currentSignatureCount = res.newSignatureCount;
+        }
+      },
+      error: (err) => {
+        this.isSigning = false;
+        this.showConfirmSignModal = false;
+        alert(err.error?.message || 'Nu s-a putut semna inițiativa.');
+      }
+    });
+  }
+
+  toggleSignatureAuth() {
+    if (!this.petition) return;
 
     if (this.petition.hasSigned) {
+      this.isSigning = true;
       this.petitionService.unsignInitiative(this.petition.id).subscribe({
         next: (res) => {
           this.isSigning = false;
@@ -360,19 +450,7 @@ export class PetitionDetailComponent implements OnInit {
         }
       });
     } else {
-      this.petitionService.signInitiative(this.petition.id).subscribe({
-        next: (res) => {
-          this.isSigning = false;
-          if (this.petition) {
-            this.petition.hasSigned = true;
-            this.petition.currentSignatureCount = res.newSignatureCount;
-          }
-        },
-        error: (err) => {
-          this.isSigning = false;
-          alert(err.error?.message || 'Nu s-a putut semna inițiativa.');
-        }
-      });
+      this.promptSignAuth();
     }
   }
 
@@ -468,5 +546,13 @@ export class PetitionDetailComponent implements OnInit {
       case 'REJECTED': return 'bg-red-50 text-red-800 border-red-200';
       default: return 'bg-slate-100 text-slate-700 border-slate-200';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    return getStatusLabel(status);
+  }
+
+  getCategoryLabel(category: string): string {
+    return getCategoryLabel(category);
   }
 }

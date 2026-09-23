@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PetitionService } from '../../services/petition.service';
+import { PetitionService, extractPageContent, extractTotalElements } from '../../services/petition.service';
 import { AuthService } from '../../services/auth.service';
-import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus } from '../../models/petition.model';
+import { AiResolutionDraft, PetitionDetail, PetitionResponse, PetitionStatus, getStatusLabel, getCategoryLabel } from '../../models/petition.model';
 import { User } from '../../models/user.model';
 
 @Component({
@@ -116,6 +116,8 @@ import { User } from '../../models/user.model';
             <option value="MEDIU">Mediu</option>
             <option value="SANATATE">Sănătate</option>
             <option value="ADMINISTRATIE_PUBLICA">Administrație publică</option>
+            <option value="SOCIAL">Protecție socială</option>
+            <option value="EDUCATIE">Educație</option>
           </select>
 
           <select [(ngModel)]="officerFilter" (change)="loadPetitions()" class="px-3.5 py-2 bg-slate-50 border border-evo-border rounded-xl text-xs font-semibold text-evo-navy focus:bg-white transition-all">
@@ -125,7 +127,7 @@ import { User } from '../../models/user.model';
             }
           </select>
 
-          <button (click)="loadPetitions()" class="btn-primary text-xs py-2 px-4">
+          <button (click)="loadPetitions()" class="btn-primary text-xs py-2 px-4 whitespace-nowrap">
             Filtrează
           </button>
         </div>
@@ -147,30 +149,30 @@ import { User } from '../../models/user.model';
             <table class="w-full text-left text-xs border-collapse">
               <thead class="bg-slate-50 text-evo-navy font-bold uppercase text-[11px] tracking-wider border-b border-evo-border">
                 <tr>
-                  <th class="p-4">Urgență SLA</th>
-                  <th class="p-4">Nr. de urmărire</th>
-                  <th class="p-4">Solicitant</th>
-                  <th class="p-4">Inspector desemnat</th>
-                  <th class="p-4">Titlu și categorie</th>
-                  <th class="p-4">Status curent</th>
-                  <th class="p-4 text-right">Acțiuni inspector</th>
+                  <th class="px-3.5 py-3.5 whitespace-nowrap">Urgență SLA</th>
+                  <th class="px-3.5 py-3.5 whitespace-nowrap">Nr. de urmărire</th>
+                  <th class="px-3.5 py-3.5 whitespace-nowrap">Solicitant</th>
+                  <th class="px-3.5 py-3.5 whitespace-nowrap">Inspector desemnat</th>
+                  <th class="px-3.5 py-3.5">Titlu și categorie</th>
+                  <th class="px-3.5 py-3.5 whitespace-nowrap">Status curent</th>
+                  <th class="px-3.5 py-3.5 text-right whitespace-nowrap">Acțiuni inspector</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-evo-border">
                 @for (item of petitions; track item.id) {
                   <tr class="hover:bg-slate-50/80 transition-colors">
-                    <td class="p-4">
+                    <td class="px-3.5 py-3.5 whitespace-nowrap">
                       @if (item.daysRemaining !== undefined && item.daysRemaining !== null) {
                         @if (item.daysRemaining < 0) {
-                          <span class="px-2.5 py-1 bg-rose-600 text-white font-bold text-[10px] rounded-lg animate-pulse inline-block">
+                          <span class="px-2.5 py-1 bg-rose-600 text-white font-bold text-[10px] rounded-lg animate-pulse inline-block whitespace-nowrap">
                             DEPĂȘIT ({{ item.daysRemaining * -1 }}z)
                           </span>
                         } @else if (item.daysRemaining <= 7) {
-                          <span class="px-2.5 py-1 bg-amber-500 text-white font-bold text-[10px] rounded-lg inline-block">
+                          <span class="px-2.5 py-1 bg-amber-500 text-white font-bold text-[10px] rounded-lg inline-block whitespace-nowrap">
                             CRITIC ({{ item.daysRemaining }}z)
                           </span>
                         } @else {
-                          <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] rounded-lg inline-block">
+                          <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] rounded-lg inline-block whitespace-nowrap">
                             În termen ({{ item.daysRemaining }}z)
                           </span>
                         }
@@ -179,40 +181,51 @@ import { User } from '../../models/user.model';
                       }
                     </td>
 
-                    <td class="p-4 font-mono font-bold text-evo-cobalt">#{{ item.trackingNumber }}</td>
-                    <td class="p-4 font-semibold text-evo-navy">{{ item.authorName }}</td>
-                    <td class="p-4">
+                    <td class="px-3.5 py-3.5 font-mono font-bold text-evo-cobalt whitespace-nowrap">#{{ item.trackingNumber }}</td>
+                    <td class="px-3.5 py-3.5 font-semibold text-evo-navy whitespace-nowrap">{{ item.authorName }}</td>
+                    <td class="px-3.5 py-3.5 whitespace-nowrap">
                       @if (item.assignedOfficerName) {
-                        <span class="px-2.5 py-1 bg-cyan-50 text-cyan-800 font-medium rounded-lg border border-cyan-200 text-[11px]">
+                        <span class="px-2.5 py-1 bg-cyan-50 text-cyan-800 font-medium rounded-lg border border-cyan-200 text-[11px] whitespace-nowrap">
                           {{ item.assignedOfficerName }}
                         </span>
                       } @else {
                         <span class="text-slate-400 italic text-[11px]">Nerepartizat</span>
                       }
                     </td>
-                    <td class="p-4">
-                      <div class="font-bold text-evo-navy max-w-xs truncate">{{ item.title }}</div>
-                      <div class="text-[10px] text-evo-text-muted">{{ item.category }}</div>
+                    <td class="px-3.5 py-3.5">
+                      <div class="font-bold text-evo-navy max-w-xs truncate leading-snug">{{ item.title }}</div>
+                      <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
+                          {{ getCategoryLabel(item.category) }}
+                        </span>
+                        @if (item.targetAuthority) {
+                          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-evo-cobalt border border-blue-100">
+                            Către: {{ item.targetAuthority }}
+                          </span>
+                        }
+                      </div>
                     </td>
-                    <td class="p-4">
-                      <span class="px-2.5 py-1 font-bold rounded-full text-[11px] border" [ngClass]="getStatusBadgeClass(item.status)">
-                        {{ item.status }}
+                    <td class="px-3.5 py-3.5 whitespace-nowrap">
+                      <span class="px-2.5 py-1 font-bold rounded-full text-[11px] border whitespace-nowrap" [ngClass]="getStatusBadgeClass(item.status)">
+                        {{ getStatusLabel(item.status) }}
                       </span>
                     </td>
-                    <td class="p-4 text-right space-x-2">
-                      <button
-                        (click)="inspectPetition(item.id)"
-                        class="btn-primary text-xs py-1.5 px-3"
-                      >
-                        Examinare dosar și AI
-                      </button>
-                      <button
-                        (click)="downloadPdf(item.id)"
-                        class="btn-secondary text-xs py-1.5 px-2.5"
-                        title="Descarcă recipisă PDF"
-                      >
-                        📄 PDF
-                      </button>
+                    <td class="px-3.5 py-3.5 text-right whitespace-nowrap">
+                      <div class="flex items-center justify-end gap-2 whitespace-nowrap">
+                        <button
+                          (click)="inspectPetition(item.id)"
+                          class="btn-primary text-xs py-1.5 px-3 whitespace-nowrap"
+                        >
+                          Examinare dosar și AI
+                        </button>
+                        <button
+                          (click)="downloadPdf(item.id)"
+                          class="btn-secondary text-xs py-1.5 px-2.5 whitespace-nowrap"
+                          title="Descarcă recipisă PDF"
+                        >
+                          📄 PDF
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 }
@@ -231,7 +244,7 @@ import { User } from '../../models/user.model';
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-mono font-bold text-evo-cobalt text-xs bg-evo-cobalt-light px-2.5 py-1 rounded-md">#{{ selectedDetail.trackingNumber }}</span>
-                  <span class="px-2.5 py-1 text-xs font-bold rounded-full border" [ngClass]="getStatusBadgeClass(selectedDetail.status)">{{ selectedDetail.status }}</span>
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full border whitespace-nowrap" [ngClass]="getStatusBadgeClass(selectedDetail.status)">{{ getStatusLabel(selectedDetail.status) }}</span>
                 </div>
                 <h2 class="text-xl font-extrabold text-evo-navy mt-2">{{ selectedDetail.title }}</h2>
               </div>
@@ -241,10 +254,14 @@ import { User } from '../../models/user.model';
             </div>
 
             <!-- Solicitant & Content Info Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-evo-border text-xs">
               <div>
                 <span class="text-evo-text-muted font-medium block mb-0.5">Solicitant / petiționar:</span>
                 <span class="font-bold text-evo-navy">{{ selectedDetail.authorName }}</span> (IDNP: {{ selectedDetail.authorIdnp || 'N/A' }})
+              </div>
+              <div>
+                <span class="text-evo-text-muted font-medium block mb-0.5">Destinatar (Autoritate):</span>
+                <span class="font-bold text-evo-cobalt">{{ selectedDetail.targetAuthority || 'Autoritate administrație publică' }}</span>
               </div>
               <div>
                 <span class="text-evo-text-muted font-medium block mb-0.5">Inspector desemnat:</span>
@@ -416,8 +433,8 @@ export class OfficerDashboardComponent implements OnInit {
       assignedOfficerId: filterOfficerId
     }).subscribe({
       next: (res) => {
-        this.petitions = res.content;
-        this.totalElements = res.totalElements;
+        this.petitions = extractPageContent(res);
+        this.totalElements = extractTotalElements(res);
 
         this.inReviewCount = this.petitions.filter(p => p.status === 'IN_REVIEW' || p.status === 'SUBMITTED').length;
         this.criticalSlaCount = this.petitions.filter(p => p.daysRemaining !== undefined && p.daysRemaining !== null && p.daysRemaining <= 7).length;
@@ -514,5 +531,13 @@ export class OfficerDashboardComponent implements OnInit {
       case 'REJECTED': return 'bg-red-50 text-red-800 border-red-200';
       default: return 'bg-slate-100 text-slate-700 border-slate-200';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    return getStatusLabel(status);
+  }
+
+  getCategoryLabel(category: string): string {
+    return getCategoryLabel(category);
   }
 }

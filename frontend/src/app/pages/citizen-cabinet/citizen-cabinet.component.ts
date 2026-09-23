@@ -1,10 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PetitionService } from '../../services/petition.service';
+import { PetitionService, extractPageContent, extractTotalElements } from '../../services/petition.service';
 import { AuthService } from '../../services/auth.service';
 import { RouterLink } from '@angular/router';
-import { PetitionCategory, PetitionResponse } from '../../models/petition.model';
+import { PetitionCategory, PetitionResponse, getStatusLabel, getCategoryLabel } from '../../models/petition.model';
 
 @Component({
   selector: 'app-citizen-cabinet',
@@ -97,7 +97,6 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           <span>Petițiile mele depuse</span>
-          <span class="px-2 py-0.5 text-xs rounded-full bg-white/20 font-mono">{{ authoredCount }}</span>
         </button>
 
         <button
@@ -109,7 +108,6 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
           <span>Inițiative semnate</span>
-          <span class="px-2 py-0.5 text-xs rounded-full bg-white/20 font-mono">{{ supportedCount }}</span>
         </button>
       </div>
 
@@ -134,75 +132,86 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
               <table class="w-full text-left text-xs sm:text-sm border-collapse">
                 <thead class="bg-slate-50 text-evo-navy font-bold uppercase text-[11px] tracking-wider border-b border-evo-border">
                   <tr>
-                    <th class="p-4">Cod de urmărire</th>
-                    <th class="p-4">Titlu și categorie</th>
-                    <th class="p-4">Tip de demers</th>
-                    <th class="p-4">Statut oficial</th>
-                    <th class="p-4">Data înregistrării</th>
-                    <th class="p-4">Termen de soluționare</th>
-                    <th class="p-4 text-center">Acțiuni</th>
+                    <th class="px-3.5 py-3.5 whitespace-nowrap">Cod de urmărire</th>
+                    <th class="px-3.5 py-3.5">Titlu și categorie</th>
+                    <th class="px-3.5 py-3.5 whitespace-nowrap">Tip de demers</th>
+                    <th class="px-3.5 py-3.5 whitespace-nowrap">Statut oficial</th>
+                    <th class="px-3.5 py-3.5 whitespace-nowrap">Data înregistrării</th>
+                    <th class="px-3.5 py-3.5 whitespace-nowrap">Termen de soluționare</th>
+                    <th class="px-3.5 py-3.5 text-center whitespace-nowrap">Acțiuni</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-evo-border">
                   @for (item of authoredPetitions; track item.id) {
                     <tr class="hover:bg-slate-50/80 transition-colors">
-                      <td class="p-4 font-mono font-bold text-evo-cobalt">
+                      <td class="px-3.5 py-3.5 font-mono font-bold text-evo-cobalt whitespace-nowrap">
                         <a [routerLink]="['/petition', item.id]" class="hover:underline">#{{ item.trackingNumber }}</a>
                       </td>
-                      <td class="p-4 max-w-xs">
-                        <a [routerLink]="['/petition', item.id]" class="font-bold text-evo-navy text-sm hover:text-evo-cobalt transition-colors line-clamp-2" [title]="item.title">
+                      <td class="px-3.5 py-3.5">
+                        <a [routerLink]="['/petition', item.id]" class="font-bold text-evo-navy text-sm hover:text-evo-cobalt transition-colors line-clamp-2 leading-snug" [title]="item.title">
                           {{ item.title }}
                         </a>
-                        <div class="text-evo-text-muted text-xs mt-0.5">{{ item.category }}</div>
+                        <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700">
+                            {{ getCategoryLabel(item.category) }}
+                          </span>
+                          @if (item.targetAuthority) {
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-evo-cobalt border border-blue-100">
+                              Către: {{ item.targetAuthority }}
+                            </span>
+                          }
+                        </div>
                       </td>
-                      <td class="p-4">
+                      <td class="px-3.5 py-3.5 whitespace-nowrap">
                         @if (item.isPublicInitiative) {
-                          <span class="px-2.5 py-1 bg-cyan-50 text-cyan-800 font-bold rounded-lg border border-cyan-200 text-[11px]">
+                          <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-cyan-50 text-cyan-800 font-bold rounded-lg border border-cyan-200 text-[11px] whitespace-nowrap">
                             Colectivă ({{ item.currentSignatureCount }}/{{ item.signatureThreshold }})
                           </span>
                         } @else {
-                          <span class="px-2.5 py-1 bg-slate-100 text-slate-700 font-bold rounded-lg border border-slate-200 text-[11px]">
+                          <span class="inline-flex items-center px-2.5 py-1 bg-slate-100 text-slate-700 font-bold rounded-lg border border-slate-200 text-[11px] whitespace-nowrap">
                             Individuală
                           </span>
                         }
                       </td>
-                      <td class="p-4">
-                        <span class="px-3 py-1 font-bold rounded-full text-xs border" [ngClass]="getStatusBadgeClass(item.status)">
-                          {{ item.status }}
+                      <td class="px-3.5 py-3.5 whitespace-nowrap">
+                        <span class="inline-flex items-center px-3 py-1 font-bold rounded-full text-xs border whitespace-nowrap" [ngClass]="getStatusBadgeClass(item.status)">
+                          {{ getStatusLabel(item.status) }}
                         </span>
                       </td>
-                      <td class="p-4 text-evo-text-muted">
+                      <td class="px-3.5 py-3.5 text-evo-text-muted whitespace-nowrap">
                         {{ item.submissionDate ? (item.submissionDate | date:'dd.MM.yyyy HH:mm') : 'În colectare' }}
                       </td>
-                      <td class="p-4 font-medium text-evo-navy">
+                      <td class="px-3.5 py-3.5 font-medium text-evo-navy whitespace-nowrap">
                         @if (item.deadlineDate) {
-                          <div class="font-bold">{{ item.deadlineDate | date:'dd.MM.yyyy' }}</div>
-                          <div class="text-xs" [ngClass]="item.daysRemaining && item.daysRemaining < 7 ? 'text-red-600 font-bold' : 'text-evo-text-muted'">
-                            ({{ item.daysRemaining }} zile)
+                          <div class="inline-flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="font-bold">{{ item.deadlineDate | date:'dd.MM.yyyy' }}</span>
+                            <span class="text-xs font-semibold" [ngClass]="item.daysRemaining && item.daysRemaining < 7 ? 'text-red-600 font-bold' : 'text-evo-text-muted'">
+                              ({{ item.daysRemaining }} zile)
+                            </span>
                           </div>
                         } @else {
                           <span class="text-evo-text-muted">-</span>
                         }
                       </td>
-                      <td class="p-4 text-center">
-                        <div class="flex items-center justify-center gap-1.5">
-                          <a [routerLink]="['/petition', item.id]" class="px-3 py-1.5 bg-evo-cobalt-light text-evo-cobalt hover:bg-evo-cobalt hover:text-white font-bold rounded-xl transition-all text-xs flex items-center gap-1">
-                            <span>Vezi detalii</span>
+                      <td class="px-3.5 py-3.5 text-center whitespace-nowrap">
+                        <div class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                          <a [routerLink]="['/petition', item.id]" class="whitespace-nowrap px-3 py-1.5 bg-evo-cobalt-light text-evo-cobalt hover:bg-evo-cobalt hover:text-white font-bold rounded-xl transition-all text-xs inline-flex items-center gap-1">
+                            <span class="whitespace-nowrap">Vezi detalii</span>
                             @if (item.status === 'RESOLVED') {
                               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                             }
                           </a>
 
-                          <button (click)="downloadPdf(item.id)" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-evo-cobalt text-xs font-bold rounded-xl border border-blue-200 transition-all" title="Descarcă recipisă oficială PDF cu QR">
+                          <button (click)="downloadPdf(item.id)" class="whitespace-nowrap inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-evo-cobalt text-xs font-bold rounded-xl border border-blue-200 transition-all" title="Descarcă recipisă oficială PDF cu QR">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <span>PDF</span>
                           </button>
 
                           @if (item.status === 'SUBMITTED' || item.status === 'COLLECTING_SIGNATURES') {
-                            <button (click)="openEditModal(item)" class="p-1.5 text-evo-cobalt hover:bg-slate-100 rounded-lg transition-colors" title="Editează">
+                            <button (click)="openEditModal(item)" class="p-1.5 text-evo-cobalt hover:bg-slate-100 rounded-lg transition-colors inline-flex items-center justify-center" title="Editează">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </button>
-                            <button (click)="deletePetition(item.id)" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Șterge">
+                            <button (click)="deletePetition(item.id)" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center justify-center" title="Șterge">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                           }
@@ -244,7 +253,7 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
                 </div>
 
                 <div class="pt-3 border-t border-evo-border flex justify-between items-center">
-                  <span class="text-xs text-slate-500 font-medium">Status: <strong class="text-evo-navy">{{ item.status }}</strong></span>
+                  <span class="text-xs text-slate-500 font-medium">Status: <strong class="text-evo-navy">{{ getStatusLabel(item.status) }}</strong></span>
                   <a [routerLink]="['/petition', item.id]" class="btn-primary text-xs py-1.5 px-3 flex items-center gap-1">
                     <span>Deschide detalii</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -317,13 +326,42 @@ import { PetitionCategory, PetitionResponse } from '../../models/petition.model'
               <div class="space-y-1.5">
                 <label for="category" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">Categorie domeniu <span class="text-red-500">*</span></label>
                 <select id="category" formControlName="category" class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-semibold text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all">
-                  <option value="INFRASTRUCTURA">Infrastructură & dezvolta re regională</option>
+                  <option value="INFRASTRUCTURA">Infrastructură & dezvoltare regională</option>
                   <option value="MEDIU">Protecția mediului & resurse naturale</option>
                   <option value="SANATATE">Sănătate publică & asistență socială</option>
                   <option value="ADMINISTRATIE_PUBLICA">Administrație publică & servicii</option>
                   <option value="SOCIAL">Protecție socială & muncă</option>
                   <option value="EDUCATIE">Educație, cultură & cercetare</option>
                 </select>
+              </div>
+
+              <div class="space-y-1.5">
+                <label for="targetAuthority" class="block text-xs font-bold uppercase tracking-wider text-evo-navy">
+                  Destinatar (Autoritate vizată) <span class="text-red-500">*</span>
+                </label>
+                <input
+                  id="targetAuthority"
+                  type="text"
+                  formControlName="targetAuthority"
+                  list="authoritiesList"
+                  placeholder="ex: Primăria Municipiului Chișinău sau Ministerul Sănătății"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-evo-border rounded-xl text-sm font-medium text-evo-navy focus:bg-white focus:ring-2 focus:ring-evo-cobalt transition-all"
+                />
+                <datalist id="authoritiesList">
+                  <option value="Primăria Municipiului Chișinău"></option>
+                  <option value="Ministerul Sănătății"></option>
+                  <option value="Ministerul Educației și Cercetării"></option>
+                  <option value="Ministerul Infrastructurii și Dezvoltării Regionale"></option>
+                  <option value="Ministerul Mediului"></option>
+                  <option value="Ministerul Afacerilor Interne"></option>
+                  <option value="Ministerul Muncii și Protecției Sociale"></option>
+                  <option value="Agenția Servicii Publice (ASP)"></option>
+                  <option value="Agenția Națională pentru Siguranța Alimentelor (ANSA)"></option>
+                  <option value="Inspectoratul General al Poliției (IGP)"></option>
+                  <option value="Primăria Municipiului Bălți"></option>
+                  <option value="Guvernul Republicii Moldova"></option>
+                </datalist>
+                <p class="text-[11px] text-evo-text-muted">Selectați din listă sau introduceți denumirea instituției căreia îi adresați petiția.</p>
               </div>
 
               <div class="space-y-1.5">
@@ -378,6 +416,7 @@ export class CitizenCabinetComponent implements OnInit {
     isPublicInitiative: [false, Validators.required],
     signatureThreshold: [50],
     category: ['INFRASTRUCTURA', Validators.required],
+    targetAuthority: ['', [Validators.required, Validators.maxLength(255)]],
     title: ['', [Validators.required, Validators.minLength(10)]],
     description: ['', [Validators.required, Validators.minLength(30)]]
   });
@@ -391,8 +430,8 @@ export class CitizenCabinetComponent implements OnInit {
     this.isLoading = true;
     this.petitionService.getMyAuthoredPetitions().subscribe({
       next: (res) => {
-        this.authoredPetitions = res.content;
-        this.authoredCount = res.totalElements;
+        this.authoredPetitions = extractPageContent(res);
+        this.authoredCount = extractTotalElements(res);
         this.isLoading = false;
       },
       error: () => this.isLoading = false
@@ -402,15 +441,15 @@ export class CitizenCabinetComponent implements OnInit {
   loadSupported() {
     this.petitionService.getMySupportedInitiatives().subscribe({
       next: (res) => {
-        this.supportedPetitions = res.content;
-        this.supportedCount = res.totalElements;
+        this.supportedPetitions = extractPageContent(res);
+        this.supportedCount = extractTotalElements(res);
       }
     });
   }
 
   openCreateModal() {
     this.editingPetitionId = null;
-    this.createForm.reset({ isPublicInitiative: false, signatureThreshold: 50, category: 'INFRASTRUCTURA' });
+    this.createForm.reset({ isPublicInitiative: false, signatureThreshold: 50, category: 'INFRASTRUCTURA', targetAuthority: '' });
     this.showModal = true;
   }
 
@@ -420,6 +459,7 @@ export class CitizenCabinetComponent implements OnInit {
       isPublicInitiative: petition.isPublicInitiative,
       signatureThreshold: petition.signatureThreshold,
       category: petition.category,
+      targetAuthority: petition.targetAuthority || '',
       title: petition.title,
       description: petition.description
     });
@@ -441,6 +481,7 @@ export class CitizenCabinetComponent implements OnInit {
       title: val.title!,
       description: val.description!,
       category: val.category as PetitionCategory,
+      targetAuthority: val.targetAuthority!,
       isPublicInitiative: val.isPublicInitiative!,
       signatureThreshold: val.signatureThreshold!
     };
@@ -510,5 +551,13 @@ export class CitizenCabinetComponent implements OnInit {
       case 'REJECTED': return 'bg-red-50 text-red-800 border-red-200';
       default: return 'bg-slate-100 text-slate-700 border-slate-200';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    return getStatusLabel(status);
+  }
+
+  getCategoryLabel(category: string): string {
+    return getCategoryLabel(category);
   }
 }

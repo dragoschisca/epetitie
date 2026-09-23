@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <footer class="bg-evo-navy text-white mt-auto border-t border-slate-800 pb-16 md:pb-0">
-      <div class="max-w-6xl mx-auto px-4 py-12">
+      <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
             <div class="flex items-center gap-3 font-bold text-xl text-white mb-4" aria-hidden="true">

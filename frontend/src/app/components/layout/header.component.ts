@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   template: `
     <!-- Top Moldovan Government Utility Line -->
     <div class="bg-evo-navy text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
-      <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="max-w-[1440px] mx-auto flex justify-between items-center">
         <div class="flex items-center space-x-3 font-medium">
           <!-- Official Flag of Moldova Badge with Coat of Arms -->
           <img src="assets/images/flag-of-moldova.png" alt="Drapelul Republicii Moldova" class="h-3.5 w-5 rounded-xs object-cover border border-white/30 shadow-xs" title="Drapelul Republicii Moldova">
@@ -34,7 +34,7 @@ import { AuthService } from '../../services/auth.service';
 
     <!-- Main Desktop & Mobile Header -->
     <header class="bg-white/90 backdrop-blur-md border-b border-evo-border sticky top-0 z-40 shadow-evo-soft">
-      <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center gap-4">
+      <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center gap-4">
         <!-- Logo & Identity -->
         <a routerLink="/" class="flex items-center gap-3.5 group focus-visible" aria-label="Acasă - e-Petiție EVO">
           <div class="w-11 h-11 bg-gradient-to-br from-evo-navy to-slate-800 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-md border border-slate-700/50 group-hover:scale-[1.02] transition-transform">

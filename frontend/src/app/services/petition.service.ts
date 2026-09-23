@@ -11,12 +11,50 @@ import {
 } from '../models/petition.model';
 import { User } from '../models/user.model';
 
-export interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
+export interface PageMetadata {
   size: number;
   number: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  totalElements?: number;
+  totalPages?: number;
+  size?: number;
+  number?: number;
+  page?: PageMetadata;
+}
+
+export function extractPageContent<T>(res: PageResponse<T> | null | undefined): T[] {
+  if (!res) return [];
+  return res.content || [];
+}
+
+export function extractTotalElements<T>(res: PageResponse<T> | null | undefined): number {
+  if (!res) return 0;
+  if (typeof res.page?.totalElements === 'number') {
+    return res.page.totalElements;
+  }
+  if (typeof res.totalElements === 'number') {
+    return res.totalElements;
+  }
+  if (Array.isArray(res.content)) {
+    return res.content.length;
+  }
+  return 0;
+}
+
+export function extractTotalPages<T>(res: PageResponse<T> | null | undefined): number {
+  if (!res) return 1;
+  if (typeof res.page?.totalPages === 'number') {
+    return res.page.totalPages;
+  }
+  if (typeof res.totalPages === 'number') {
+    return res.totalPages;
+  }
+  return 1;
 }
 
 @Injectable({
